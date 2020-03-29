@@ -15,6 +15,8 @@
 #include <bits/stdc++.h> 
 #include <algorithm> 
 #include <chrono> 
+#include "utilfunction.h"
+#include "params.h"
 using namespace std::chrono;
 
 using namespace std;
@@ -63,11 +65,11 @@ using namespace std;
 // };	
 
 
-// define global variables
-int function_call =0;
-stack <State> finalOptPath;
-int final_del_t;
-int final_traj_index;
+// // define global variables
+// int function_call =0;
+// stack <State> finalOptPath;
+// int final_del_t;
+// int final_traj_index;
 
 
 static void planner(
@@ -90,19 +92,23 @@ static void planner(
 	std::vector<State> fullGraph;
 
 	// initial conditions
-	Coord coordsinit(0.0, 0.0, 0.0);
+	const Coord coordsinit(0.0, 0.0, 0.0);
 	State state_init(coordsinit);
 	state_init.setID(elemCt);
 	fullGraph.push_back(state_init);
 	elemCt++;
 
+	// final conditions
+	const Coord goalCoord(100, -100, - PI/2);
+
 	// initiate graph search using Dijkstraa's
 	fullGraph[0].setG(0.0);
+	int finID;
 
 	std::priority_queue< State, vector<State>, CompareF_pre> open_set;
 	open_set.push(fullGraph[0]);
 
-	while(!open_set.empty()  ){
+	while(!open_set.empty() && !( open_set.top().getCoords() == goalCoord ) ){
 
 		// generate primitives
 		State temp = open_set.top();
@@ -112,26 +118,65 @@ static void planner(
 		open_set.pop();
 
 		// extend implicit graph
-		std::vector<MotionPrimitive> nextStates = getNextStates( temp.coords );
+		std::vector<Primitive> nextStates = getNextStates( temp.getCoords() );
 
 		for (auto i_primitive : nextStates){
 
-			if( freeState(i_primitive.coords) ){
+			if( freeState(i_primitive.coord_final) ){
 
-				State pushState(i_primitive.coords);
+				State pushState(i_primitive.coord_final);
 				pushState.setID( elemCt );
-				pushState.addAdjID(tempID);
-				fullGraph[tempID].addAdjID(elemCt);
+
+				Graphedge existing, push; 
+
+				existing.ID = tempID; 
+				existing.cost = i_primitive.cost;
+				pushState.addAdjElem(existing);
+
+				push.ID = elemCt;
+				push.cost = i_primitive.cost;
+				fullGraph[tempID].addAdjElem(push);
+
 				fullGraph.push_back(pushState);
 				elemCt++;
 			}
 		}
 
-		for(auto id : temp.getAdjIDs()){
+		for(auto edge : temp.getAdjElems()){
 
-			if( fullGraph[id].getG() > temp.getG() + cost )
+			if( fullGraph[edge.ID].getG() > temp.getG() + edge.cost ){
+
+				fullGraph[edge.ID].setG( temp.getG() + edge.cost );
+				open_set.push(fullGraph[edge.ID]);
+			}
 		}
 	}
+
+	if(!open_set.empty()){
+
+		finID = open_set.top().getID();
+	}
+
+	std::stack <State> optPath;
+	optPath.push(fullGraph[finID]);
+	int optID;
+
+	while( !(optPath.top().getCoords()==coordsinit) ){
+
+		double min_G = numeric_limits<double>::infinity();
+
+		for(auto i_edge : optPath.top().getAdjElems()){
+
+			if(min_G > fullGraph[i_edge.ID].getG() + i_edge.cost){
+
+				min_G = fullGraph[i_edge.ID].getG() + i_edge.cost;
+				optID = i_edge.ID;
+			}
+		}
+		optPath.push( fullGraph[optID] );
+	}
+
+	optPath.pop();
 
 	// auto start = high_resolution_clock::now();
 	// function_call++;

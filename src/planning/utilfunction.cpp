@@ -6,70 +6,71 @@
 // #define vel_plan 2
 // #define euler_dt 0.01
 
-double freeState( Coord coordsIn ){}
+bool freeState( Coord coordsIn ){return true;}
 
 // everything for graph construction
-std::vector<MotionPrimitive> getNextStates( Coord coordsIn  ){
+std::vector<Primitive> getNextStates( Coord coordsIn  ){
 
-	std::vector<MotionPrimitive> primitives;
+	std::vector<Primitive> primitives;
 
 	// straight - short (1)
 	Control in(vel_plan, 0.0);
 	double t_ahead = 1.0;
-	MotionPrimitive temp; 
+	Primitive temp; 
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 1.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 
 	// straight - long (2)
-	Control in(vel_plan, 0.0);
-	double t_ahead = 2.0;
-	MotionPrimitive temp; 
+	// Control in(vel_plan, 0.0);
+	in.vel = vel_plan; in.curv = 0.0;
+	t_ahead = 2.0;
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 2.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 
 	// reverse - short (3)
-	Control in(-vel_plan, 0.0);
-	double t_ahead = 1.0;
-	MotionPrimitive temp; 
+	// Control in(-vel_plan, 0.0);
+	in.vel = -vel_plan; in.curv = 0.0;
+	t_ahead = 1.0;
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 5.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 
 
 	// left - sharp (4)
-	Control in( vel_plan, curv_lim );
-	double t_ahead = 0.5;
-	MotionPrimitive temp; 
+	// Control in( vel_plan, curv_lim );
+	in.vel = vel_plan; in.curv = curv_lim;
+	t_ahead = 0.5;
+	// Primitive temp; 
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 1.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 
 	// right - sharp (5)
-	Control in( vel_plan, -curv_lim );
-	double t_ahead = 0.5;
-	MotionPrimitive temp; 
+	// Control in( vel_plan, -curv_lim );
+	in.vel = vel_plan; in.curv = -curv_lim;
+	t_ahead = 0.5;
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 1.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 
 	// left - mild (6)
-	Control in( vel_plan, curv_lim/2 );
-	double t_ahead = 0.7;
-	MotionPrimitive temp; 
+	// Control in( vel_plan, curv_lim/2 );
+	in.vel = vel_plan; in.curv = curv_lim/2;
+	t_ahead = 0.7;
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 1.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 
 
 	// right - mild (7)
-	Control in( vel_plan, -curv_lim/2 );
-	double t_ahead = 0.7;
-	MotionPrimitive temp; 
+	// Control in( vel_plan, -curv_lim/2 );
+	in.vel = vel_plan; in.curv = -curv_lim/2;
+	t_ahead = 0.7;
 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
 	temp.cost = 1.0;
-	primitives.push_back( MotionPrimitive );
+	primitives.push_back( temp );
 }
 
 
@@ -89,6 +90,14 @@ Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead ){
 	// coordOut.x = x_end; coordOut.y = y_end; coordOut.theta = theta_end;
 	coordOut.snapToGrid();
 	return coordOut;
+}
+
+bool Coord::operator=(const Coord &obj){
+
+	if(x == obj.x && y==obj.y && theta == obj.theta)
+		return true;
+	else
+		return false;
 }
 
 void Coord::snapToGrid(){
@@ -139,7 +148,7 @@ Coord State::getCoords() const { return coords; }
 double State::getG() const {return g_val;} 
 bool State::getExpanded() const {return expanded;} 
 int State::getID() const {return listID;}
-std::vector<int> State::getAdjIDs() const {return adjIDs;}
+std::vector<Graphedge> State::getAdjElems() const {return adjElems;}
 
 void State::setX(int x_grid_) { x_grid = x_grid_; return;}
 void State::setY(int y_grid_) { y_grid = y_grid_; return;}
@@ -151,4 +160,4 @@ void State::setG(double g_val_) {
 }
 void State::expand() { expanded = true; return; }
 void State::setID(int listID_) { listID = listID_; }
-void State::addAdjID(int adjID_) {adjIDs.push_back(adjID_);}
+void State::addAdjElem(Graphedge adjElem_) {adjElems.push_back(adjElem_);}
