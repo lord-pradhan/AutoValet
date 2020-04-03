@@ -1,4 +1,6 @@
 #include <vector>
+#include <limits>
+#include <bits/stdc++.h> 
 
 
 #ifndef UTILFUNCTION_H
@@ -15,9 +17,27 @@ public:
 	Coord(double x_, double y_, double theta_): x(x_), y(y_), theta(theta_) {}
 
 	bool operator==(const Coord &obj);
-
-	void snapToGrid();
+	// void snapToGrid();
 };
+
+
+
+class CoordDisc{
+
+public:
+	int x, y;
+	int theta;
+
+	CoordDisc(){}
+	CoordDisc(int x_, int y_, int theta_): x(x_), y(y_), theta(theta_) {}
+
+	bool operator==(const CoordDisc &obj);
+
+	// void snapToGrid();
+};
+
+
+
 
 class Control{
 
@@ -28,7 +48,8 @@ public:
 };
 
 
-class Graphedge{
+//// graph edge ////
+class GraphEdge{
 
 public:
 	int ID;
@@ -36,41 +57,44 @@ public:
 };
 
 
-//graph state
-class State{
 
+
+//// graph state /////
+class State{
 private:	
-	Coord coords;
+	CoordDisc coords;
 	double g_val;
 	bool expanded;
 	int listID;
-	std::vector<Graphedge> adjElems;
+	std::vector<GraphEdge> adjElems;
 
 public:
 	State();
 	State(int x_, int y_, double theta_);
-	State(Coord coordsIn);
+	State(CoordDisc coordsIn);
 
 	double getX() const;
 	double getY() const;
 	double getTheta() const;
-	Coord getCoords() const;
+	CoordDisc getCoords() const;
 	double getG() const;
 	bool getExpanded() const;
 	int getID() const;
-	std::vector<Graphedge> getAdjElems() const;
+	std::vector<GraphEdge> getAdjElems() const;
 
 	void setX(double x_);
 	void setY(double y_);
 	void setTheta(double theta_);
-	void setCoords(Coord coordsIn);
+	void setCoords(CoordDisc coordsIn);
 	void setG(double g_val_);
 	void expand();
 	void setID(int listID_);
-	void addAdjElem(Graphedge elemIn);
+	void addAdjElem(GraphEdge elemIn);
 };
 
-// compare struct for the priority queue
+
+
+///// compare struct for the priority queue /////
 struct CompareF_pre{
     bool operator()(State const & s1, State const & s2) {
         // return "true" if "p1" is ordered before "p2", for example:
@@ -78,19 +102,37 @@ struct CompareF_pre{
     }
 };
 
+
+
+//// primitive class //////
 class Primitive{
 
 public:
-	Coord coord_final;
+	std::vector<Coord> intermPoses;
+	CoordDisc endPose;
 	double cost;
+	int primID, startAngleDisc;
+	// Coord applyPrimEnd( Coord poseIn );
 };
 
 
-// useful functions
-std::vector<Primitive> getNextStates( Coord coordsIn  );
+////// read mprim class //////
+class MPrimFile{
 
-Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead );
+public:
+	std::vector<Primitive> inputPrims;
+	int primTot, numAngles;
+}
+
+
+
+//// useful functions //////
+// std::vector<Primitive> getNextStates( Coord coordsIn  );
+
+// Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead );
 
 bool freeState( Coord coordsIn );
+
+bool goalRegion(const Coord& ego, const Coord &goal);
 
 #endif

@@ -5,7 +5,7 @@
  *=================================================================*/
 #include <iostream>
 #include <math.h>
-#include <mex.h>
+// #include <mex.h>
 #include <array>
 #include <queue>
 #include <vector>
@@ -18,88 +18,68 @@
 #include "utilfunction.h"
 #include "params.h"
 using namespace std::chrono;
-
 using namespace std;
+#include "./matplotlib-cpp/matplotlibcpp.h"
+#include <cmath>
 
-/* Input Arguments */
-#define	MAP_IN                  prhs[0]
-#define	ROBOT_IN                prhs[1]
-#define	TARGET_TRAJ             prhs[2]
-#define	TARGET_POS              prhs[3]
-#define	CURR_TIME               prhs[4]
-#define	COLLISION_THRESH        prhs[5]
+namespace plt = matplotlibcpp;
 
 
-/* Output Arguments */
-#define	ACTION_OUT              plhs[0]
-
-//access to the map is shifted to account for 0-based indexing in the map, whereas
-//1-based indexing in matlab (so, robotpose and goalpose are 1-indexed)
-#define GETMAPINDEX(X, Y, XSIZE, YSIZE) ((Y-1)*XSIZE + (X-1))
-
-#if !defined(MAX)
-#define	MAX(A, B)	((A) > (B) ? (A) : (B))
-#endif
-
-#if !defined(MIN)
-#define	MIN(A, B)	((A) < (B) ? (A) : (B))
-#endif
-
-#define NUMOFDIRS 8
+#define  NORMALIZEDISCTHETA(THETA, THETADIRS) (((THETA>=0)?((THETA)%(THETADIRS)):(((THETA)%(THETADIRS)+THETADIRS)%THETADIRS)))
+#define 	DISCXY2CONT(X, CELLSIZE)   ((X)*(CELLSIZE) + (CELLSIZE)/2.0)
+#define CONTXY2DISC(X, CELLSIZE) (((X)>=0)?((int)((X)/(CELLSIZE))):((int)((X)/(CELLSIZE))-1))
 
 
-// define required classes
+// #define GETMAPINDEX(X, Y, XSIZE, YSIZE) ((Y-1)*XSIZE + (X-1))
 
-// class TrajPoint{
+// #if !defined(MAX)
+// #define	MAX(A, B)	((A) > (B) ? (A) : (B))
+// #endif
 
-// private:
-// 	int traj_id;
-// 	double g_value;
+// #if !defined(MIN)
+// #define	MIN(A, B)	((A) < (B) ? (A) : (B))
+// #endif
 
-// public:
-// 	int getTrajID() const{return traj_id;}
-// 	double getGVal() const{return g_value;}
-
-// 	void setTrajID(int traj_id_){traj_id = traj_id_;}
-// 	void setGVal(double g_value_){g_value = g_value_;}
-// };	
-
-
-// // define global variables
+// // // define global variables
 // int function_call =0;
-// stack <State> finalOptPath;
-// int final_del_t;
-// int final_traj_index;
+// // stack <State> finalOptPath;
+// // int final_del_t;
+// // int final_traj_index;
 
 
-static void planner(
-        double*	map,
-        int collision_thresh,
-        int x_size,
-        int y_size,
-        int robotposeX,
-        int robotposeY,
-        int target_steps,
-        double* target_traj,
-        int targetposeX,
-        int targetposeY,
-        int curr_time,
-        double* action_ptr
-        )
+static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord, const char* sMotPrimFile)
 {
+	//shift to discrete
+	const CoordDisc coordsInitDisc( CONTXY2DISC(coordsinit.x, graph_dx), CONTXY2DISC(coordsinit.y, graph_dy),
+	ContTheta2Disc(coordsinit.theta, numAngles) );
+
+	// read in motion primitives file
+	MPrimFile readFile;
+
+	if (sMotPrimFile != NULL) {
+        FILE* fMotPrim = fopen(sMotPrimFile, "r");
+        if (fMotPrim == NULL) {
+            // std::stringstream ss;
+            // ss << "ERROR: unable to open " << sMotPrimFile;
+            printf("unable to open \n"); 
+        }
+
+        if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
+            printf("ERROR: failed to read in motion primitive file");
+        }
+        fclose();
+    }
+
 	//initialise vars
 	int elemCt = 0;
 	std::vector<State> fullGraph;
 
 	// initial conditions
-	const Coord coordsinit(0.0, 0.0, 0.0);
-	State state_init(coordsinit);
+	State state_init(coordsInitDisc);
 	state_init.setID(elemCt);
 	fullGraph.push_back(state_init);
 	elemCt++;
 
-	// final conditions
-	const Coord goalCoord(100, -100, - PI/2);
 
 	// initiate graph search using Dijkstraa's
 	fullGraph[0].setG(0.0);
@@ -108,7 +88,7 @@ static void planner(
 	std::priority_queue< State, vector<State>, CompareF_pre> open_set;
 	open_set.push(fullGraph[0]);
 
-	while(!open_set.empty() && !( open_set.top().getCoords() == goalCoord ) ){
+	while( !open_set.empty() && !( open_set.top().getCoords() == goalCoord ) ){
 
 		// generate primitives
 		State temp = open_set.top();
@@ -118,37 +98,52 @@ static void planner(
 		open_set.pop();
 
 		// extend implicit graph
-		std::vector<Primitive> nextStates = getNextStates( temp.getCoords() );
+		for(auto i : readFile.inputPrims){
 
-		for (auto i_primitive : nextStates){
+			if( temp.coords.theta== i.startAngleDisc ){
 
-			if( freeState(i_primitive.coord_final) ){
-
-				State pushState(i_primitive.coord_final);
-				pushState.setID( elemCt );
-
-				Graphedge existing, push; 
-
-				existing.ID = tempID; 
-				existing.cost = i_primitive.cost;
-				pushState.addAdjElem(existing);
-
-				push.ID = elemCt;
-				push.cost = i_primitive.cost;
-				fullGraph[tempID].addAdjElem(push);
-
-				fullGraph.push_back(pushState);
-				elemCt++;
+				CoordDisc tempPose;
+				tempPose.x = temp.coords.x + i.endPose.x;
+				tempPose.y = temp.coords.x + i.endPose.y;
+				
 			}
 		}
 
-		for(auto edge : temp.getAdjElems()){
+		// std::vector<Primitive> nextStates = getNextStates( temp.getCoords() );
 
-			if( fullGraph[edge.ID].getG() > temp.getG() + edge.cost ){
+		// for (auto i_primitive : nextStates){
 
-				fullGraph[edge.ID].setG( temp.getG() + edge.cost );
+		// 	if( freeState(i_primitive.coord_final) ){
+
+		// 		State pushState(i_primitive.coord_final);
+		// 		pushState.setID( elemCt );
+
+		// 		GraphEdge existing, push; 
+
+		// 		existing.ID = tempID; 
+		// 		existing.cost = i_primitive.cost;
+		// 		pushState.addAdjElem(existing);
+
+		// 		push.ID = elemCt;
+		// 		push.cost = i_primitive.cost;
+		// 		fullGraph[tempID].addAdjElem(push);
+
+		// 		fullGraph.push_back(pushState);
+		// 		elemCt++;
+		// 	}
+		// }
+
+		for(auto edge : fullGraph[tempID].getAdjElems()){
+
+			if( fullGraph[edge.ID].getG() > fullGraph[tempID].getG() + edge.cost ){
+
+				fullGraph[edge.ID].setG( fullGraph[tempID].getG() + edge.cost );
 				open_set.push(fullGraph[edge.ID]);
 			}
+		}
+
+		if(open_set.top().getCoords() == goalCoord){
+			printf("target expanded\n");
 		}
 	}
 
@@ -175,8 +170,13 @@ static void planner(
 		}
 		optPath.push( fullGraph[optID] );
 	}
+	printf("optPath.size() is %d \n", optPath.size());
+    return optPath;
+}
 
-	optPath.pop();
+	// optPath.pop();
+
+	// return optPath;
 
 	// auto start = high_resolution_clock::now();
 	// function_call++;
@@ -332,7 +332,35 @@ static void planner(
  //    action_ptr[0] = newposeX;
  //    action_ptr[1] = newposeY;
 
-    return;
+
+int main(int argc, char* argv[]){
+
+	const Coord coordsinit(0.0, 0.0, 0.0);
+	const Coord goalCoord(20.0, 0, 0);
+
+	std::stack <State> optPath = planner( coordsinit, goalCoord );
+	printf("optPath.size() is %d \n", optPath.size());
+
+	int pathSize = optPath.size();
+
+	std::vector<double> x(optPath.size()), y(optPath.size());//, z(n), w(n,2);
+	for(int i=0; i<pathSize;i++){
+
+		x.at(i) = optPath.top().getX();
+		y.at(i) = optPath.top().getY();
+		printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
+
+		optPath.pop();
+	}
+
+	// Set the size of output image to 1200x780 pixels
+    plt::figure_size(1200, 780);
+    // Plot line from given x and y data. Color is selected automatically.
+    plt::plot(x, y);
+
+    plt::xlim(0, 30);
+
+    plt::show();
 }
 
 // prhs contains input parameters (4):
@@ -341,72 +369,72 @@ static void planner(
 // 3rd is a matrix with the target trajectory
 // 4th is an integer C, the collision threshold for the map
 // plhs should contain output parameters (1):
-// 1st is a row vector <dx,dy> which corresponds to the action that the robot should make
-void mexFunction( int nlhs, mxArray *plhs[],
-        int nrhs, const mxArray*prhs[] )
+// // 1st is a row vector <dx,dy> which corresponds to the action that the robot should make
+// void mexFunction( int nlhs, mxArray *plhs[],
+//         int nrhs, const mxArray*prhs[] )
         
-{
+// {
     
-    /* Check for proper number of arguments */
-    if (nrhs != 6) {
-        mexErrMsgIdAndTxt( "MATLAB:planner:invalidNumInputs",
-                "Six input arguments required.");
-    } else if (nlhs != 1) {
-        mexErrMsgIdAndTxt( "MATLAB:planner:maxlhs",
-                "One output argument required.");
-    }
+//     /* Check for proper number of arguments */
+//     if (nrhs != 6) {
+//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidNumInputs",
+//                 "Six input arguments required.");
+//     } else if (nlhs != 1) {
+//         mexErrMsgIdAndTxt( "MATLAB:planner:maxlhs",
+//                 "One output argument required.");
+//     }
     
-    /* get the dimensions of the map and the map matrix itself*/
-    int x_size = mxGetM(MAP_IN);
-    int y_size = mxGetN(MAP_IN);
-    double* map = mxGetPr(MAP_IN);
+//     /* get the dimensions of the map and the map matrix itself*/
+//     int x_size = mxGetM(MAP_IN);
+//     int y_size = mxGetN(MAP_IN);
+//     double* map = mxGetPr(MAP_IN);
     
-    /* get the dimensions of the robotpose and the robotpose itself*/
-    int robotpose_M = mxGetM(ROBOT_IN);
-    int robotpose_N = mxGetN(ROBOT_IN);
-    if(robotpose_M != 1 || robotpose_N != 2){
-        mexErrMsgIdAndTxt( "MATLAB:planner:invalidrobotpose",
-                "robotpose vector should be 1 by 2.");
-    }
-    double* robotposeV = mxGetPr(ROBOT_IN);
-    int robotposeX = (int)robotposeV[0];
-    int robotposeY = (int)robotposeV[1];
+//     /* get the dimensions of the robotpose and the robotpose itself*/
+//     int robotpose_M = mxGetM(ROBOT_IN);
+//     int robotpose_N = mxGetN(ROBOT_IN);
+//     if(robotpose_M != 1 || robotpose_N != 2){
+//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidrobotpose",
+//                 "robotpose vector should be 1 by 2.");
+//     }
+//     double* robotposeV = mxGetPr(ROBOT_IN);
+//     int robotposeX = (int)robotposeV[0];
+//     int robotposeY = (int)robotposeV[1];
     
-    /* get the dimensions of the goalpose and the goalpose itself*/
-    int targettraj_M = mxGetM(TARGET_TRAJ);
-    int targettraj_N = mxGetN(TARGET_TRAJ);
+//     /* get the dimensions of the goalpose and the goalpose itself*/
+//     int targettraj_M = mxGetM(TARGET_TRAJ);
+//     int targettraj_N = mxGetN(TARGET_TRAJ);
     
-    if(targettraj_M < 1 || targettraj_N != 2)
-    {
-        mexErrMsgIdAndTxt( "MATLAB:planner:invalidtargettraj",
-                "targettraj vector should be M by 2.");
-    }
-    double* targettrajV = mxGetPr(TARGET_TRAJ);
-    int target_steps = targettraj_M;
+//     if(targettraj_M < 1 || targettraj_N != 2)
+//     {
+//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidtargettraj",
+//                 "targettraj vector should be M by 2.");
+//     }
+//     double* targettrajV = mxGetPr(TARGET_TRAJ);
+//     int target_steps = targettraj_M;
     
-    /* get the current position of the target*/
-    int targetpose_M = mxGetM(TARGET_POS);
-    int targetpose_N = mxGetN(TARGET_POS);
-    if(targetpose_M != 1 || targetpose_N != 2){
-        mexErrMsgIdAndTxt( "MATLAB:planner:invalidtargetpose",
-                "targetpose vector should be 1 by 2.");
-    }
-    double* targetposeV = mxGetPr(TARGET_POS);
-    int targetposeX = (int)targetposeV[0];
-    int targetposeY = (int)targetposeV[1];
+//     /* get the current position of the target*/
+//     int targetpose_M = mxGetM(TARGET_POS);
+//     int targetpose_N = mxGetN(TARGET_POS);
+//     if(targetpose_M != 1 || targetpose_N != 2){
+//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidtargetpose",
+//                 "targetpose vector should be 1 by 2.");
+//     }
+//     double* targetposeV = mxGetPr(TARGET_POS);
+//     int targetposeX = (int)targetposeV[0];
+//     int targetposeY = (int)targetposeV[1];
     
-    /* get the current timestep the target is at*/
-    int curr_time = mxGetScalar(CURR_TIME);
+//     /* get the current timestep the target is at*/
+//     int curr_time = mxGetScalar(CURR_TIME);
     
-    /* Create a matrix for the return action */ 
-    ACTION_OUT = mxCreateNumericMatrix( (mwSize)1, (mwSize)2, mxDOUBLE_CLASS, mxREAL); 
-    double* action_ptr = (double*) mxGetData(ACTION_OUT);
+//     /* Create a matrix for the return action */ 
+//     ACTION_OUT = mxCreateNumericMatrix( (mwSize)1, (mwSize)2, mxDOUBLE_CLASS, mxREAL); 
+//     double* action_ptr = (double*) mxGetData(ACTION_OUT);
     
-    /* Get collision threshold for problem */
-    int collision_thresh = (int) mxGetScalar(COLLISION_THRESH);
+//     /* Get collision threshold for problem */
+//     int collision_thresh = (int) mxGetScalar(COLLISION_THRESH);
     
-    /* Do the actual planning in a subroutine */
-    planner(map, collision_thresh, x_size, y_size, robotposeX, robotposeY, target_steps, targettrajV, targetposeX, targetposeY, curr_time, &action_ptr[0]);
-    // printf("DONE PLANNING!\n");
-    return;   
-}
+//     /* Do the actual planning in a subroutine */
+//     planner(map, collision_thresh, x_size, y_size, robotposeX, robotposeY, target_steps, targettrajV, targetposeX, targetposeY, curr_time, &action_ptr[0]);
+//     // printf("DONE PLANNING!\n");
+//     return;   
+// }
