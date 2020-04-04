@@ -415,20 +415,19 @@ bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn){
     int endx_c = CONTXY2DISC(mp_endx_m, graph_dx);
     int endy_c = CONTXY2DISC(mp_endy_m, graph_dy);
     endtheta_c = ContTheta2Disc(mp_endtheta_rad, numAngles);
-    if (endx_c != pMotPrim.intermPoses.back().x ||
-        endy_c != pMotPrim.intermPoses.back().y ||
-        endtheta_c != pMotPrim.intermPoses.back().theta)
+    if (endx_c != pMotPrim.endPose.x ||
+        endy_c != pMotPrim.endPose.y ||
+        endtheta_c != pMotPrim.endPose.theta)
     {
-        printf( "ERROR: incorrect primitive \n");
-        // %d with startangle=%d "
-        //            "last interm point %f %f %f does not match end pose %d %d %d\n",
-        //            pMotPrim.primID, pMotPrim.startAngleIndex,
-        //            pMotPrim->intermptV[pMotPrim->intermptV.size() - 1].x,
-        //            pMotPrim->intermptV[pMotPrim->intermptV.size() - 1].y,
-        //            pMotPrim->intermptV[pMotPrim->intermptV.size() - 1].theta,
-        //            pMotPrim->endcell.x, pMotPrim->endcell.y,
-        //            pMotPrim->endcell.theta);
-        // SBPL_FFLUSH(stdout);
+        printf( "ERROR: incorrect primitive %d with startangle=%d "
+                   "last interm point %f %f %f does not match end pose %d %d %d\n",
+                   pMotPrim.primID, pMotPrim.startAngleDisc,
+                   pMotPrim.intermPoses[pMotPrim.intermPoses.size() - 1].x,
+                   pMotPrim.intermPoses[pMotPrim.intermPoses.size() - 1].y,
+                   pMotPrim.intermPoses[pMotPrim.intermPoses.size() - 1].theta,
+                   pMotPrim.endPose.x, pMotPrim.endPose.y,
+                   pMotPrim.endPose.theta);
+        fflush(stdout);
         return false;
     }
 
@@ -458,7 +457,7 @@ bool ReadinCell( CoordDisc& pose, FILE* fIn)
     return true;
 }
 
-bool ReadinPose( Coord pose, FILE* fIn)
+bool ReadinPose( Coord& pose, FILE* fIn)
 {
     char sTemp[60];
 

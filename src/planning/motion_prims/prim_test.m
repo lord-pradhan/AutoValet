@@ -4,7 +4,7 @@ Rmin=9.0;
 
 forward_cost = 1;
 backward_cost = 5;
-turn_cost = 1;
+turn_cost = 3;
 short_segment_cost = 3;
 
 ntraj=14

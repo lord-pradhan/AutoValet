@@ -141,7 +141,7 @@ bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn);
 
 bool ReadinCell( CoordDisc& pose, FILE* fIn);
 
-bool ReadinPose( Coord pose, FILE* fIn);
+bool ReadinPose( Coord& pose, FILE* fIn);
 
 int ContTheta2Disc(double fTheta, int NUMOFANGLEVALS);
 

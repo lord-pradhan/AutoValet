@@ -68,6 +68,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
         if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
             printf("ERROR: failed to read in motion primitive file");
+            // return;
         }
         fclose(fMotPrim);
     }
@@ -202,7 +203,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 int main(int argc, char* argv[]){
 
 	const Coord coordsinit(0.0, 0.0, 0.0);
-	const Coord goalCoord(20.0, 0, 0);
+	const Coord goalCoord(10.0, 10.0, 0);
 
 	std::stack <State> optPath = planner( coordsinit, goalCoord, "prim_test.mprim" );
 	printf("optPath.size() is %d \n", optPath.size());
@@ -212,8 +213,8 @@ int main(int argc, char* argv[]){
 	std::vector<double> x(optPath.size()), y(optPath.size());//, z(n), w(n,2);
 	for(int i=0; i<pathSize;i++){
 
-		x.at(i) = optPath.top().getX();
-		y.at(i) = optPath.top().getY();
+		x.at(i) = DISCXY2CONT( optPath.top().getX() , graph_dx);
+		y.at(i) = DISCXY2CONT( optPath.top().getY(), graph_dy);
 		printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
 
 		optPath.pop();
@@ -224,7 +225,7 @@ int main(int argc, char* argv[]){
     // Plot line from given x and y data. Color is selected automatically.
     plt::plot(x, y);
 
-    plt::xlim(0, 30);
+    plt::xlim(0, 50);
 
     plt::show();
 }
