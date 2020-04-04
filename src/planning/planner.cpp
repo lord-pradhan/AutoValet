@@ -52,6 +52,8 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	//shift to discrete
 	const CoordDisc coordsInitDisc( CONTXY2DISC(coordsinit.x, graph_dx), CONTXY2DISC(coordsinit.y, graph_dy),
 	ContTheta2Disc(coordsinit.theta, numAngles) );
+	const CoordDisc coordsGoalDisc( CONTXY2DISC(goalCoord.x, graph_dx), CONTXY2DISC(goalCoord.y, graph_dy),
+	ContTheta2Disc(goalCoord.theta, numAngles) );
 
 	// read in motion primitives file
 	MPrimFile readFile;
@@ -67,7 +69,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
         if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
             printf("ERROR: failed to read in motion primitive file");
         }
-        fclose();
+        fclose(fMotPrim);
     }
 
 	//initialise vars
@@ -88,7 +90,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	std::priority_queue< State, vector<State>, CompareF_pre> open_set;
 	open_set.push(fullGraph[0]);
 
-	while( !open_set.empty() && !( open_set.top().getCoords() == goalCoord ) ){
+	while( !open_set.empty() && !( open_set.top().getCoords() == coordsGoalDisc ) ){
 
 		// generate primitives
 		State temp = open_set.top();
@@ -100,13 +102,35 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 		// extend implicit graph
 		for(auto i : readFile.inputPrims){
 
-			if( temp.coords.theta== i.startAngleDisc ){
+			if( temp.getCoords().theta== i.startAngleDisc ){
 
 				CoordDisc tempPose;
-				tempPose.x = temp.coords.x + i.endPose.x;
-				tempPose.y = temp.coords.x + i.endPose.y;
-				
-			}
+				tempPose.x = temp.getCoords().x + i.endPose.x;
+				tempPose.y = temp.getCoords().y + i.endPose.y;
+				// angle wrap
+				// tempPose.theta = ContTheta2Disc( wrap2pi( DiscTheta2Cont( tempPose.theta, numAngles ) ),
+				// 					 numAngles );
+				tempPose.theta = i.endPose.theta;
+
+				if(freeState(tempPose)){
+
+					State newState(tempPose);
+					newState.setID(elemCt);
+
+					GraphEdge exToNew, newToEx;
+
+					newToEx.ID = tempID;
+					newToEx.cost = i.cost;
+					newState.addAdjElem(newToEx);
+
+					exToNew.ID = elemCt;
+					exToNew.cost= i.cost;
+					fullGraph[tempID].addAdjElem(exToNew);
+
+					fullGraph.push_back(newState);
+					elemCt++;
+				}
+			}			
 		}
 
 		// std::vector<Primitive> nextStates = getNextStates( temp.getCoords() );
@@ -142,7 +166,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 			}
 		}
 
-		if(open_set.top().getCoords() == goalCoord){
+		if(open_set.top().getCoords() == coordsGoalDisc){
 			printf("target expanded\n");
 		}
 	}
@@ -156,7 +180,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	optPath.push(fullGraph[finID]);
 	int optID;
 
-	while( !(optPath.top().getCoords()==coordsinit) ){
+	while( !(optPath.top().getCoords() == coordsInitDisc) ){
 
 		double min_G = numeric_limits<double>::infinity();
 
@@ -174,171 +198,13 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
     return optPath;
 }
 
-	// optPath.pop();
-
-	// return optPath;
-
-	// auto start = high_resolution_clock::now();
-	// function_call++;
-
-	// // ********** New Planner *********
-
-	// if (function_call==1){
-
-	//     // 9-connected grid
-	//     int dX[NUMOFDIRS] = { -1, -1, -1,  0,  0,  1, 1, 1};
-	//     int dY[NUMOFDIRS] = { -1,  0,  1, -1,  1, -1, 0, 1}; 
-
-
-	// 	// Run Dijsktraa's first
-	//     State state_init;
-	// 	vector<vector<State> > grid_map(y_size, vector<State>(x_size, state_init));
-
-	// 	// initialize start state
-	// 	grid_map[robotposeY-1][ robotposeX - 1 ].setG(0.0);
-
-	// 	// initialize map
-	// 	for (int i =0; i<y_size; i++){
-	// 		for (int j=0; j<x_size; j++){
-
-	// 			grid_map[i][j].setX(j+1);
-	// 			grid_map[i][j].setY(i+1);
-	// 		}
-	// 	}
-
-	// 	// initialize open list
-	// 	priority_queue <State, vector<State>, CompareF_pre> open_set_pre;
-	// 	open_set_pre.push( grid_map[robotposeY-1][robotposeX-1] );
-
-
-	// 	// start while loop for Dijkstraa expansion, update all G values
-	// 	while( !open_set_pre.empty() ){
-
-	// 		State temp = open_set_pre.top();
-	// 		int x_temp = temp.getX();
-	// 		int y_temp = temp.getY();
-	// 		double g_temp = temp.getG();
-	// 		grid_map[y_temp-1][x_temp-1].expand();
-
-	// 		// remove smallest S from open
-	// 		open_set_pre.pop();
-
-	// 		// // span through successors at next time step
-
-	// 		for(int dir = 0; dir < NUMOFDIRS; dir++){
-
-	// 	        int newx = x_temp + dX[dir];
-	// 	        int newy = y_temp + dY[dir];
-
-	// 	        if (newx >= 1 && newx <= x_size && newy >= 1 && newy <= y_size)
-	// 	        {
-	// 	            if (((int)map[GETMAPINDEX(newx,newy,x_size,y_size)] >= 0) && 
-	// 	            ((int)map[GETMAPINDEX(newx,newy,x_size,y_size)] < collision_thresh) && 
-	// 	            (!grid_map[newy-1][newx-1].getExpanded()) )  //if free
-	// 	            {
-
-	// 	            	if( grid_map[newy-1][newx-1].getG() > g_temp + (int)map[GETMAPINDEX(newx,newy,x_size,y_size)] ){
-
-	// 						grid_map[newy-1][newx-1].setG(g_temp + (int)map[GETMAPINDEX(newx,newy,x_size,y_size)]);
-	// 						open_set_pre.push(grid_map[newy-1][newx-1]);
-	// 	            	}
-	// 	            }
-	// 	        }
-	// 	    }
-	// 	}
-
-	// 	mexPrintf("Dijkstraa expansion done \n");
-
-	// 	// look for minimum cost point on target_traj
-	// 	double g_path = numeric_limits<double>::infinity();
-	// 	cout<<"target steps "<<target_steps<<endl;
-
-	// 	//clear optPath
-	// 	while(!finalOptPath.empty()){finalOptPath.pop();}
-
-	// 	for (int i=1; i<target_steps; i++){
-
-	// 		stack <State> optPath;
-
-	// 		// push point on traj
-	// 		optPath.push(grid_map[  target_traj[i+target_steps] - 1 ][ target_traj[i] - 1]);
-
-	// 		while( optPath.top().getX() != grid_map[robotposeY-1][robotposeX-1].getX() || optPath.top().getY() 
-	// 			!= grid_map[robotposeY-1][robotposeX-1].getY() ){
-
-	// 			double min_G = numeric_limits<double>::infinity(); 
-	// 			int finX, finY;
-
-	// 			for(int dir1 = 0; dir1 < NUMOFDIRS; dir1++){
-
-	// 		        int newx = optPath.top().getX() + dX[dir1];
-	// 		        int newy = optPath.top().getY() + dY[dir1];
-
-	// 		        if (newx >= 1 && newx <= x_size && newy >= 1 && 
-	// 		        	newy <= y_size && min_G > grid_map[newy-1][newx-1].getG() ){
-
-	// 					min_G = grid_map[newy-1][newx-1].getG();
-	// 					// cout<<"min_g is "<<min_G<<endl;
-	// 					finX = newx; finY = newy;
-	// 		        }
-	// 		    }
-			   
-	// 		    optPath.push(grid_map[finY-1][finX-1]);
-	// 		}
-
-	// 		// time robot has to wait at final spot
-	// 		int del_t = -( curr_time + optPath.size() - i );
-	// 		int x_end = target_traj[i]; int y_end = target_traj[i+target_steps];
-
-	// 		if ( optPath.size() >0 && del_t >= 0 && (g_path > grid_map[ y_end - 1 ][ x_end - 1 ].getG()
-	// 							+ del_t * (int)map[GETMAPINDEX(x_end,y_end,x_size,y_size)] ) ){
-
-	// 			g_path = grid_map[ y_end - 1 ][ x_end - 1 ].getG()
-	// 							+ del_t * (int)map[GETMAPINDEX(x_end,y_end,x_size,y_size)];
-
-	// 			finalOptPath = optPath;
-	// 			final_del_t = del_t;
-	// 			final_traj_index = i;
-	// 		}
-	// 	}
-
-	// cout<<"size of path "<< finalOptPath.size() <<endl;
-	// cout<<"cost of path "<< g_path <<endl;
-	// auto stop = high_resolution_clock::now();
-	// auto duration = duration_cast<microseconds>(stop - start);
-	// mexPrintf("del_t is %d \n", final_del_t);
-	// mexPrintf("Final traj index is %d \n", final_traj_index);
-	// mexPrintf("Duration is %d \n", duration.count());
-	// }
-
-	// int newposeX, newposeY;
-
-	// // if reached final point
-	// if ( (robotposeX == target_traj[final_traj_index] && robotposeY == target_traj[final_traj_index+target_steps]) ||
-	// 	finalOptPath.size()<=1 ){
-
-	// 	newposeX = robotposeX;
-	// 	newposeY = robotposeY;
-	// }
-	// else{ // else keep moving
-
-	// 	finalOptPath.pop();
-	// 	newposeX = finalOptPath.top().getX();
-	// 	newposeY = finalOptPath.top().getY();
-	// }
-
-
-	// mexPrintf("Commanded pose is %d %d \n", newposeX, newposeY);
- //    action_ptr[0] = newposeX;
- //    action_ptr[1] = newposeY;
-
 
 int main(int argc, char* argv[]){
 
 	const Coord coordsinit(0.0, 0.0, 0.0);
 	const Coord goalCoord(20.0, 0, 0);
 
-	std::stack <State> optPath = planner( coordsinit, goalCoord );
+	std::stack <State> optPath = planner( coordsinit, goalCoord, "prim_test.mprim" );
 	printf("optPath.size() is %d \n", optPath.size());
 
 	int pathSize = optPath.size();

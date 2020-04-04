@@ -12,7 +12,7 @@
 //////////////// useful functions ////////
 
 
-bool freeState( Coord coordsIn ){return true;}
+bool freeState( CoordDisc coordsIn ){return true;}
 
 
 bool goalRegion(const Coord& ego, const Coord &goal){
@@ -31,11 +31,12 @@ bool goalRegion(const Coord& ego, const Coord &goal){
 
 double wrap2pi(const double& theta_in){
 
-	theta_in = fmod( theta_in, 2*PI );
-	if(theta_in<0){
-		theta += 2*PI;
+	double theta_out;
+	theta_out = fmod( theta_in, 2*PI );
+	if(theta_out<0){
+		theta_out += 2*PI;
 	}
-	return theta;
+	return theta_out;
 }
 
 // everything for graph construction
@@ -106,26 +107,26 @@ double wrap2pi(const double& theta_in){
 // }
 
 
-Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead ){
+// Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead ){
 
-	double x_end = coordsIn.x, y_end = coordsIn.y, theta_end=coordsIn.theta;
-	for(int i = 0; i < std::round((double) time_ahead/euler_dt); i++ ){
+// 	double x_end = coordsIn.x, y_end = coordsIn.y, theta_end=coordsIn.theta;
+// 	for(int i = 0; i < std::round((double) time_ahead/euler_dt); i++ ){
 
-		theta_end += euler_dt * controlIn.vel * controlIn.curv;
-		// printf("theta_end is %lf \n", theta_end);
-		x_end += euler_dt * controlIn.vel * cos(theta_end);
-		// printf("x_end is %lf \n", x_end);
-		y_end += euler_dt * controlIn.vel * sin(theta_end); 
-		// printf("y_end is %lf \n", y_end);
+// 		theta_end += euler_dt * controlIn.vel * controlIn.curv;
+// 		// printf("theta_end is %lf \n", theta_end);
+// 		x_end += euler_dt * controlIn.vel * cos(theta_end);
+// 		// printf("x_end is %lf \n", x_end);
+// 		y_end += euler_dt * controlIn.vel * sin(theta_end); 
+// 		// printf("y_end is %lf \n", y_end);
 
-		// insert collision checking here
-	}
+// 		// insert collision checking here
+// 	}
 
-	Coord coordOut(x_end, y_end, theta_end); 
-	// coordOut.x = x_end; coordOut.y = y_end; coordOut.theta = theta_end;
-	coordOut.snapToGrid();
-	return coordOut;
-}
+// 	Coord coordOut(x_end, y_end, theta_end); 
+// 	// coordOut.x = x_end; coordOut.y = y_end; coordOut.theta = theta_end;
+// 	coordOut.snapToGrid();
+// 	return coordOut;
+// }
 
 bool Coord::operator==(const Coord &obj){
 
@@ -189,19 +190,19 @@ State::State(CoordDisc coordsIn): coords(coordsIn), expanded(false){
 	g_val = std::numeric_limits<double>::infinity();	
 }
 
-double State::getX() const {return coords.x;} 
-double State::getY() const {return coords.y;} 
-double State::getTheta() const {return coords.theta;}
+int State::getX() const {return coords.x;} 
+int State::getY() const {return coords.y;} 
+int State::getTheta() const {return coords.theta;}
 CoordDisc State::getCoords() const { return coords; }
 
 double State::getG() const {return g_val;} 
 bool State::getExpanded() const {return expanded;} 
 int State::getID() const {return listID;}
-std::vector<Graphedge> State::getAdjElems() const {return adjElems;}
+std::vector<GraphEdge> State::getAdjElems() const {return adjElems;}
 
-void State::setX(double x_grid_) { coords.x = x_grid_; return;}
-void State::setY(double y_grid_) { coords.y = y_grid_; return;}
-void State::setTheta(double theta_) {coords.theta = theta_;}
+void State::setX(int x_grid_) { coords.x = x_grid_; return;}
+void State::setY(int y_grid_) { coords.y = y_grid_; return;}
+void State::setTheta(int theta_) {coords.theta = theta_;}
 void State::setCoords(CoordDisc coordsIn){ coords = coordsIn; }
 
 void State::setG(double g_val_) { 
@@ -209,7 +210,7 @@ void State::setG(double g_val_) {
 }
 void State::expand() { expanded = true; return; }
 void State::setID(int listID_) { listID = listID_; }
-void State::addAdjElem(Graphedge adjElem_) {adjElems.push_back(adjElem_);}
+void State::addAdjElem(GraphEdge adjElem_) {adjElems.push_back(adjElem_);}
 
 
 ////// Primitive class ////////
@@ -298,7 +299,7 @@ bool ReadMotionPrimitives(FILE* fMotPrims, MPrimFile& readFile){
     for (int i = 0; i < totalNumofActions; i++) {
         Primitive motprim;
 
-        if (!ReadinMotionPrimitive(&motprim, fMotPrims)) {
+        if (!ReadinMotionPrimitive(motprim, fMotPrims)) {
             return false;
         }
 
@@ -393,7 +394,7 @@ bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn){
     // initial orientation
     for (int i = 0; i < numofIntermPoses; i++) {
         Coord intermpose;
-        if (ReadinPose(intermpose, fIn, readFile) == false) {
+        if (ReadinPose(intermpose, fIn) == false) {
             printf("ERROR: failed to read in intermediate poses\n");
             return false;
         }
@@ -405,7 +406,7 @@ bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn){
     Coord sourcepose;
     sourcepose.x = DISCXY2CONT(0, graph_dx);
     sourcepose.y = DISCXY2CONT(0, graph_dy);
-    sourcepose.theta = DiscTheta2Cont(pMotPrim.startAngleDisc);
+    sourcepose.theta = DiscTheta2Cont(pMotPrim.startAngleDisc, numAngles);
     double mp_endx_m = sourcepose.x + pMotPrim.intermPoses.back().x;
     double mp_endy_m = sourcepose.y + pMotPrim.intermPoses.back().y;
     double mp_endtheta_rad = pMotPrim.intermPoses.back().theta;
@@ -413,7 +414,7 @@ bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn){
     int endtheta_c;
     int endx_c = CONTXY2DISC(mp_endx_m, graph_dx);
     int endy_c = CONTXY2DISC(mp_endy_m, graph_dy);
-    endtheta_c = ContTheta2DiscNew(mp_endtheta_rad);
+    endtheta_c = ContTheta2Disc(mp_endtheta_rad, numAngles);
     if (endx_c != pMotPrim.intermPoses.back().x ||
         endy_c != pMotPrim.intermPoses.back().y ||
         endtheta_c != pMotPrim.intermPoses.back().theta)
@@ -474,7 +475,7 @@ bool ReadinPose( Coord pose, FILE* fIn)
     }
     pose.theta = atof(sTemp);
 
-    pose.theta = normalizeAngle(pose->theta);
+    pose.theta = normalizeAngle(pose.theta);
 
     return true;
 }
@@ -494,4 +495,24 @@ double DiscTheta2Cont(int nTheta, int NUMOFANGLEVALS)
 {
 	double thetaBinSize = 2.0*PI/NUMOFANGLEVALS;
 	return nTheta*thetaBinSize;
+}
+
+double normalizeAngle(double angle)
+{
+	double retangle = angle;
+
+	//get to the range from -2PI, 2PI
+	if(fabs(retangle) > 2*PI)
+	 retangle = retangle - ((int)(retangle/(2*PI)))*2*PI; 
+
+	//get to the range 0, 2PI
+	if(retangle < 0)
+	 retangle += 2*PI;
+
+	if(retangle < 0 || retangle > 2*PI)
+	 {
+	 printf("ERROR: after normalization of angle=%f we get angle=%f\n", angle, retangle);
+	 }
+
+	return retangle;
 }

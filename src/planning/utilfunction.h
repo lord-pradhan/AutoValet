@@ -37,15 +37,13 @@ public:
 };
 
 
+// class Control{
 
+// public:
+// 	Control(double vel_, double curv_): vel(vel_), curv(curv_){}
 
-class Control{
-
-public:
-	Control(double vel_, double curv_): vel(vel_), curv(curv_){}
-
-	double vel, curv;
-};
+// 	double vel, curv;
+// };
 
 
 //// graph edge ////
@@ -70,21 +68,21 @@ private:
 
 public:
 	State();
-	State(int x_, int y_, double theta_);
+	State(int x_, int y_, int theta_);
 	State(CoordDisc coordsIn);
 
-	double getX() const;
-	double getY() const;
-	double getTheta() const;
+	int getX() const;
+	int getY() const;
+	int getTheta() const;
 	CoordDisc getCoords() const;
 	double getG() const;
 	bool getExpanded() const;
 	int getID() const;
 	std::vector<GraphEdge> getAdjElems() const;
 
-	void setX(double x_);
-	void setY(double y_);
-	void setTheta(double theta_);
+	void setX(int x_);
+	void setY(int y_);
+	void setTheta(int theta_);
 	void setCoords(CoordDisc coordsIn);
 	void setG(double g_val_);
 	void expand();
@@ -122,7 +120,7 @@ class MPrimFile{
 public:
 	std::vector<Primitive> inputPrims;
 	int primTot, numAngles;
-}
+};
 
 
 
@@ -131,8 +129,24 @@ public:
 
 // Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead );
 
-bool freeState( Coord coordsIn );
+bool freeState( CoordDisc coordsIn );
 
 bool goalRegion(const Coord& ego, const Coord &goal);
+
+double wrap2pi(const double& theta_in);
+
+bool ReadMotionPrimitives(FILE* fMotPrims, MPrimFile& readFile);
+
+bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn);
+
+bool ReadinCell( CoordDisc& pose, FILE* fIn);
+
+bool ReadinPose( Coord pose, FILE* fIn);
+
+int ContTheta2Disc(double fTheta, int NUMOFANGLEVALS);
+
+double DiscTheta2Cont(int nTheta, int NUMOFANGLEVALS);
+
+double normalizeAngle(double angle);
 
 #endif
