@@ -12,6 +12,6 @@ extern int numAngles;
 
 extern double graph_dtheta;
 
-extern double curv_lim;
+// extern double curv_lim;
 
 #endif

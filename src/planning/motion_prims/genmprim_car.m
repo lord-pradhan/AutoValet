@@ -26,7 +26,7 @@
 %  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 %  * POSSIBILITY OF SUCH DAMAGE.
 %  */
-function[] = genmprim_unicycle(outfilename)
+function[] = genmprim_car(outfilename)
 
 %
 %generates motion primitives and saves them into file

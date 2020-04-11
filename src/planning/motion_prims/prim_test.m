@@ -1,4 +1,4 @@
-resolution=0.2;
+resolution=0.01;
 num_angles=16;
 Rmin=9.0;
 

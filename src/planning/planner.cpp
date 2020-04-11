@@ -50,9 +50,9 @@ namespace plt = matplotlibcpp;
 static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord, const char* sMotPrimFile)
 {
 	//shift to discrete
-	const CoordDisc coordsInitDisc( CONTXY2DISC(coordsinit.x, graph_dx), CONTXY2DISC(coordsinit.y, graph_dy),
+	const CoordDisc coordsInitDisc( ContXY2Disc(coordsinit.x, graph_dx), ContXY2Disc(coordsinit.y, graph_dy),
 	ContTheta2Disc(coordsinit.theta, numAngles) );
-	const CoordDisc coordsGoalDisc( CONTXY2DISC(goalCoord.x, graph_dx), CONTXY2DISC(goalCoord.y, graph_dy),
+	const CoordDisc coordsGoalDisc( ContXY2Disc(goalCoord.x, graph_dx), ContXY2Disc(goalCoord.y, graph_dy),
 	ContTheta2Disc(goalCoord.theta, numAngles) );
 
 	// read in motion primitives file
@@ -79,10 +79,10 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 	// initial conditions
 	State state_init(coordsInitDisc);
+	state_init.setH(coordsGoalDisc);
 	state_init.setID(elemCt);
 	fullGraph.push_back(state_init);
 	elemCt++;
-
 
 	// initiate graph search using Dijkstraa's
 	fullGraph[0].setG(0.0);
@@ -90,6 +90,9 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 	std::priority_queue< State, vector<State>, CompareF_pre> open_set;
 	open_set.push(fullGraph[0]);
+
+	std::unordered_set<int> lookUpState;
+	lookUpState.insert(GetIndex(fullGraph[0].getCoords()));
 
 	while( !open_set.empty() && !( open_set.top().getCoords() == coordsGoalDisc ) ){
 
@@ -112,16 +115,19 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 				// tempPose.theta = ContTheta2Disc( wrap2pi( DiscTheta2Cont( tempPose.theta, numAngles ) ),
 				// 					 numAngles );
 				tempPose.theta = i.endPose.theta;
+				// printf("tempPose is %d %d %d\n", tempPose.x, tempPose.y, tempPose.theta);
 
-				if(freeState(tempPose)){
+				if(freeState(tempPose) ){// && (lookUpState.find(GetIndex(tempPose)) == lookUpState.end()) ){
 
 					State newState(tempPose);
+					newState.setH(coordsGoalDisc);
 					newState.setID(elemCt);
 
 					GraphEdge exToNew, newToEx;
 
 					newToEx.ID = tempID;
 					newToEx.cost = i.cost;
+					// printf("newToEx.cost is %lf \n", i.cost);
 					newState.addAdjElem(newToEx);
 
 					exToNew.ID = elemCt;
@@ -130,40 +136,25 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 					fullGraph.push_back(newState);
 					elemCt++;
+					lookUpState.insert(GetIndex(newState.getCoords()));
 				}
 			}			
 		}
 
-		// std::vector<Primitive> nextStates = getNextStates( temp.getCoords() );
-
-		// for (auto i_primitive : nextStates){
-
-		// 	if( freeState(i_primitive.coord_final) ){
-
-		// 		State pushState(i_primitive.coord_final);
-		// 		pushState.setID( elemCt );
-
-		// 		GraphEdge existing, push; 
-
-		// 		existing.ID = tempID; 
-		// 		existing.cost = i_primitive.cost;
-		// 		pushState.addAdjElem(existing);
-
-		// 		push.ID = elemCt;
-		// 		push.cost = i_primitive.cost;
-		// 		fullGraph[tempID].addAdjElem(push);
-
-		// 		fullGraph.push_back(pushState);
-		// 		elemCt++;
-		// 	}
-		// }
-
+		// printf("size of fullGraph[tempID].getAdjElems() is %d\n", fullGraph[tempID].getAdjElems().size());
 		for(auto edge : fullGraph[tempID].getAdjElems()){
 
-			if( fullGraph[edge.ID].getG() > fullGraph[tempID].getG() + edge.cost ){
+			if( (fullGraph[edge.ID].getG() > fullGraph[tempID].getG() + edge.cost) ){ //&& 
+				// !(fullGraph[edge.ID].getExpanded() ) ){
 
 				fullGraph[edge.ID].setG( fullGraph[tempID].getG() + edge.cost );
 				open_set.push(fullGraph[edge.ID]);
+				fullGraph[edge.ID].expand();
+				if(fullGraph[edge.ID].getCoords().theta!=0 && fullGraph[edge.ID].getCoords().x>0){
+					printf("expanded state is %d %d %d\n", fullGraph[edge.ID].getCoords().x, 
+						fullGraph[edge.ID].getCoords().y, fullGraph[edge.ID].getCoords().theta );
+					printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
+				}
 			}
 		}
 
@@ -172,40 +163,46 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 		}
 	}
 
+	std::stack <State> optPath;
+
 	if(!open_set.empty()){
 
 		finID = open_set.top().getID();
-	}
+		optPath.push(fullGraph[finID]);
+		int optID;
 
-	std::stack <State> optPath;
-	optPath.push(fullGraph[finID]);
-	int optID;
+		while( !(optPath.top().getCoords() == coordsInitDisc) ){
 
-	while( !(optPath.top().getCoords() == coordsInitDisc) ){
+			double min_G = numeric_limits<double>::infinity();
 
-		double min_G = numeric_limits<double>::infinity();
+			for(auto i_edge : optPath.top().getAdjElems()){
 
-		for(auto i_edge : optPath.top().getAdjElems()){
+				if(min_G > fullGraph[i_edge.ID].getG() + i_edge.cost){
 
-			if(min_G > fullGraph[i_edge.ID].getG() + i_edge.cost){
-
-				min_G = fullGraph[i_edge.ID].getG() + i_edge.cost;
-				optID = i_edge.ID;
+					min_G = fullGraph[i_edge.ID].getG() + i_edge.cost;
+					optID = i_edge.ID;
+				}
 			}
+			optPath.push( fullGraph[optID] );
 		}
-		optPath.push( fullGraph[optID] );
+		printf("optPath.size() is %d \n", optPath.size());
 	}
-	printf("optPath.size() is %d \n", optPath.size());
-    return optPath;
+	else{
+
+		printf("open set is empty, exiting\n");
+	}
+
+	return optPath;
+
 }
 
 
 int main(int argc, char* argv[]){
 
-	const Coord coordsinit(0.0, 0.0, 0.0);
-	const Coord goalCoord(10.0, 10.0, 0);
+	const Coord coordsinit(2.0, 500.0, 0.0);
+	const Coord goalCoord(300, 700, 0.0);
 
-	std::stack <State> optPath = planner( coordsinit, goalCoord, "prim_test.mprim" );
+	std::stack <State> optPath = planner( coordsinit, goalCoord, "sbpl_prim.mprim" );
 	printf("optPath.size() is %d \n", optPath.size());
 
 	int pathSize = optPath.size();
@@ -213,95 +210,21 @@ int main(int argc, char* argv[]){
 	std::vector<double> x(optPath.size()), y(optPath.size());//, z(n), w(n,2);
 	for(int i=0; i<pathSize;i++){
 
-		x.at(i) = DISCXY2CONT( optPath.top().getX() , graph_dx);
-		y.at(i) = DISCXY2CONT( optPath.top().getY(), graph_dy);
+		x.at(i) = DiscXY2Cont( optPath.top().getX() , graph_dx);
+		y.at(i) = DiscXY2Cont( optPath.top().getY(), graph_dy);
 		printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
 
 		optPath.pop();
 	}
+	printf("goal coords are %d %d %d\n",  ContXY2Disc(goalCoord.x, graph_dx), ContXY2Disc(goalCoord.y, graph_dy),
+	ContTheta2Disc(goalCoord.theta, numAngles));
 
 	// Set the size of output image to 1200x780 pixels
     plt::figure_size(1200, 780);
     // Plot line from given x and y data. Color is selected automatically.
     plt::plot(x, y);
 
-    plt::xlim(0, 50);
+    plt::xlim(0, 400);
 
     plt::show();
 }
-
-// prhs contains input parameters (4):
-// 1st is matrix with all the obstacles
-// 2nd is a row vector <x,y> for the robot position
-// 3rd is a matrix with the target trajectory
-// 4th is an integer C, the collision threshold for the map
-// plhs should contain output parameters (1):
-// // 1st is a row vector <dx,dy> which corresponds to the action that the robot should make
-// void mexFunction( int nlhs, mxArray *plhs[],
-//         int nrhs, const mxArray*prhs[] )
-        
-// {
-    
-//     /* Check for proper number of arguments */
-//     if (nrhs != 6) {
-//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidNumInputs",
-//                 "Six input arguments required.");
-//     } else if (nlhs != 1) {
-//         mexErrMsgIdAndTxt( "MATLAB:planner:maxlhs",
-//                 "One output argument required.");
-//     }
-    
-//     /* get the dimensions of the map and the map matrix itself*/
-//     int x_size = mxGetM(MAP_IN);
-//     int y_size = mxGetN(MAP_IN);
-//     double* map = mxGetPr(MAP_IN);
-    
-//     /* get the dimensions of the robotpose and the robotpose itself*/
-//     int robotpose_M = mxGetM(ROBOT_IN);
-//     int robotpose_N = mxGetN(ROBOT_IN);
-//     if(robotpose_M != 1 || robotpose_N != 2){
-//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidrobotpose",
-//                 "robotpose vector should be 1 by 2.");
-//     }
-//     double* robotposeV = mxGetPr(ROBOT_IN);
-//     int robotposeX = (int)robotposeV[0];
-//     int robotposeY = (int)robotposeV[1];
-    
-//     /* get the dimensions of the goalpose and the goalpose itself*/
-//     int targettraj_M = mxGetM(TARGET_TRAJ);
-//     int targettraj_N = mxGetN(TARGET_TRAJ);
-    
-//     if(targettraj_M < 1 || targettraj_N != 2)
-//     {
-//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidtargettraj",
-//                 "targettraj vector should be M by 2.");
-//     }
-//     double* targettrajV = mxGetPr(TARGET_TRAJ);
-//     int target_steps = targettraj_M;
-    
-//     /* get the current position of the target*/
-//     int targetpose_M = mxGetM(TARGET_POS);
-//     int targetpose_N = mxGetN(TARGET_POS);
-//     if(targetpose_M != 1 || targetpose_N != 2){
-//         mexErrMsgIdAndTxt( "MATLAB:planner:invalidtargetpose",
-//                 "targetpose vector should be 1 by 2.");
-//     }
-//     double* targetposeV = mxGetPr(TARGET_POS);
-//     int targetposeX = (int)targetposeV[0];
-//     int targetposeY = (int)targetposeV[1];
-    
-//     /* get the current timestep the target is at*/
-//     int curr_time = mxGetScalar(CURR_TIME);
-    
-//     /* Create a matrix for the return action */ 
-//     ACTION_OUT = mxCreateNumericMatrix( (mwSize)1, (mwSize)2, mxDOUBLE_CLASS, mxREAL); 
-//     double* action_ptr = (double*) mxGetData(ACTION_OUT);
-    
-//     /* Get collision threshold for problem */
-//     int collision_thresh = (int) mxGetScalar(COLLISION_THRESH);
-    
-//     /* Do the actual planning in a subroutine */
-//     planner(map, collision_thresh, x_size, y_size, robotposeX, robotposeY, target_steps, targettrajV, targetposeX, targetposeY, curr_time, &action_ptr[0]);
-//     // printf("DONE PLANNING!\n");
-//     return;   
-// }

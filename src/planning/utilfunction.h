@@ -61,7 +61,7 @@ public:
 class State{
 private:	
 	CoordDisc coords;
-	double g_val;
+	double g_val, h_val;
 	bool expanded;
 	int listID;
 	std::vector<GraphEdge> adjElems;
@@ -76,6 +76,7 @@ public:
 	int getTheta() const;
 	CoordDisc getCoords() const;
 	double getG() const;
+	double getH() const;
 	bool getExpanded() const;
 	int getID() const;
 	std::vector<GraphEdge> getAdjElems() const;
@@ -85,21 +86,20 @@ public:
 	void setTheta(int theta_);
 	void setCoords(CoordDisc coordsIn);
 	void setG(double g_val_);
+	void setH(CoordDisc goalDisc);
 	void expand();
 	void setID(int listID_);
 	void addAdjElem(GraphEdge elemIn);
 };
 
 
-
 ///// compare struct for the priority queue /////
 struct CompareF_pre{
     bool operator()(State const & s1, State const & s2) {
         // return "true" if "p1" is ordered before "p2", for example:
-        return s1.getG() >  s2.getG();
+        return s1.getG()+s1.getH() >  s2.getG()+s2.getH();
     }
 };
-
 
 
 //// primitive class //////
@@ -148,5 +148,11 @@ int ContTheta2Disc(double fTheta, int NUMOFANGLEVALS);
 double DiscTheta2Cont(int nTheta, int NUMOFANGLEVALS);
 
 double normalizeAngle(double angle);
+
+int GetIndex(CoordDisc coordsIn);
+
+int ContXY2Disc(double val, double resolution);
+
+double DiscXY2Cont( int val, double resolution );
 
 #endif

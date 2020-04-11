@@ -4,6 +4,7 @@
 #include <vector>
 #include <limits>
 #include <bits/stdc++.h> 
+#include "./Dubins-Curves/include/dubins.h"
 
 
 #define  NORMALIZEDISCTHETA(THETA, THETADIRS) (((THETA>=0)?((THETA)%(THETADIRS)):(((THETA)%(THETADIRS)+THETADIRS)%THETADIRS)))
@@ -12,7 +13,19 @@
 //////////////// useful functions ////////
 
 
-bool freeState( CoordDisc coordsIn ){return true;}
+bool freeState( CoordDisc coordsIn ){
+
+    double x_ul = 1000, x_ll = 0, y_ul = 1000, y_ll = 0;
+    double x= DISCXY2CONT(coordsIn.x, graph_dx), y = DISCXY2CONT(coordsIn.y, graph_dy);
+    // double theta = DiscTheta2Cont(coordsIn.theta, numAngles);
+
+    if( x > x_ul || x< x_ll || y > y_ul || y< y_ll ){
+
+        return false;
+    }
+
+    return true;
+}
 
 
 bool goalRegion(const Coord& ego, const Coord &goal){
@@ -196,6 +209,7 @@ int State::getTheta() const {return coords.theta;}
 CoordDisc State::getCoords() const { return coords; }
 
 double State::getG() const {return g_val;} 
+double State::getH() const {return h_val;} 
 bool State::getExpanded() const {return expanded;} 
 int State::getID() const {return listID;}
 std::vector<GraphEdge> State::getAdjElems() const {return adjElems;}
@@ -208,9 +222,13 @@ void State::setCoords(CoordDisc coordsIn){ coords = coordsIn; }
 void State::setG(double g_val_) { 
 	g_val = g_val_;
 }
+void State::setH(CoordDisc goalDisc){
+    h_val = (double) sqrt( (coords.x - goalDisc.x)*(coords.x - goalDisc.x) + 
+        (coords.y - goalDisc.y)*(coords.y - goalDisc.y) );
+}
 void State::expand() { expanded = true; return; }
 void State::setID(int listID_) { listID = listID_; }
-void State::addAdjElem(GraphEdge adjElem_) {adjElems.push_back(adjElem_);}
+void State::addAdjElem(GraphEdge adjElem_){adjElems.push_back(adjElem_);}
 
 
 ////// Primitive class ////////
@@ -483,10 +501,8 @@ bool ReadinPose( Coord& pose, FILE* fIn)
  //maps 0->0, [delta/2, 3/2*delta)->1, [3/2*delta, 5/2*delta)->2,...
 int ContTheta2Disc(double fTheta, int NUMOFANGLEVALS)
 {
-
 	double thetaBinSize = 2.0*PI/NUMOFANGLEVALS;
 	return (int)(normalizeAngle(fTheta+thetaBinSize/2.0)/(2.0*PI)*(NUMOFANGLEVALS));
- 
 }
 
 
@@ -514,4 +530,32 @@ double normalizeAngle(double angle)
 	 }
 
 	return retangle;
+}
+
+double DiscXY2Cont( int val, double resolution ){
+
+    // DISCXY2CONT(X, CELLSIZE)   ((X)*(CELLSIZE) + (CELLSIZE)/2.0)
+    return (double) val*resolution + resolution/2.0 ;
+}
+
+int ContXY2Disc(double val, double resolution){
+
+    // (val>=0)?( (int)  )
+    int out;
+    int offset = fmod(val,resolution);
+    if(offset>resolution/2){
+        out = std::floor(val/resolution) + 1;
+    }
+    else
+        out = std::floor(val/resolution);
+    
+    return out;
+}
+// CONTXY2DISC(X, CELLSIZE) (((X)>=0)?((int)((X)/(CELLSIZE))):((int)((X)/(CELLSIZE))-1))
+
+int GetIndex(CoordDisc coordsIn){
+
+    // x = x_abs - x_r; y = y_abs - y_r; t = t_as - t_r;
+    int x = coordsIn.x, y = coordsIn.y, theta = coordsIn.theta;
+    return theta*(2*theta-1)*(2*theta+1)/3 + (y+theta)*(2*theta+1) + x + theta;
 }
