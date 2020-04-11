@@ -24,7 +24,7 @@
 #endif
 #include <math.h>
 #include "dubins.h"
-
+#include <vector>
 #define EPSILON (10e-10)
 
 typedef enum 
@@ -238,7 +238,8 @@ int dubins_path_sample( DubinsPath* path, double t, double q[3] )
 }
 
 int dubins_path_sample_many(DubinsPath* path, double stepSize, 
-                            DubinsPathSamplingCallback cb, void* user_data)
+                            DubinsPathSamplingCallback cb, std::vector<double>& x0, 
+                            std::vector<double>& y0)
 {
     int retcode;
     double q[3];
@@ -246,7 +247,7 @@ int dubins_path_sample_many(DubinsPath* path, double stepSize,
     double length = dubins_path_length(path);
     while( x <  length ) {
         dubins_path_sample( path, x, q );
-        retcode = cb(q, x, user_data);
+        retcode = cb(q, x, x0, y0);
         if( retcode != 0 ) {
             return retcode;
         }

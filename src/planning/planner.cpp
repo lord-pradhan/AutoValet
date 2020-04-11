@@ -140,31 +140,41 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 						fullGraph.push_back(newState);
 						elemCt++;
-						// lookUpState.insert(GetIndex(newState.getCoords()));
-					}
 
+						fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost );
+						open_set.push(fullGraph[elemCt-1]);
+						fullGraph[elemCt-1].expand();
+						lookUpG[GetIndex(fullGraph[elemCt-1].getCoords())] = fullGraph[tempID].getG() + i.cost;
+						// lookUpState.insert(GetIndex(newState.getCoords()));
+
+						if(fullGraph[elemCt-1].getCoords().theta!=0 && fullGraph[elemCt-1].getCoords().x>0){
+							printf("expanded state is %d %d %d\n", fullGraph[elemCt-1].getCoords().x, 
+								fullGraph[elemCt-1].getCoords().y, fullGraph[elemCt-1].getCoords().theta );
+							// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
+						}
+					}
 				}
 			}			
 		}
 
 		// printf("size of fullGraph[tempID].getAdjElems() is %d\n", fullGraph[tempID].getAdjElems().size());
-		for(auto edge : fullGraph[tempID].getAdjElems()){
+		// for(auto edge : fullGraph[tempID].getAdjElems()){
 
-			if( (fullGraph[edge.ID].getG() > fullGraph[tempID].getG() + edge.cost) ){ //&& 
-				// !(fullGraph[edge.ID].getExpanded() ) ){
+		// 	if( (fullGraph[edge.ID].getG() > fullGraph[tempID].getG() + edge.cost) ){ //&& 
+		// 		// !(fullGraph[edge.ID].getExpanded() ) ){
 
-				fullGraph[edge.ID].setG( fullGraph[tempID].getG() + edge.cost );
-				open_set.push(fullGraph[edge.ID]);
-				fullGraph[edge.ID].expand();
-				lookUpG[GetIndex(fullGraph[edge.ID].getCoords())] = fullGraph[tempID].getG() + edge.cost;
+		// 		fullGraph[edge.ID].setG( fullGraph[tempID].getG() + edge.cost );
+		// 		open_set.push(fullGraph[edge.ID]);
+		// 		fullGraph[edge.ID].expand();
+		// 		lookUpG[GetIndex(fullGraph[edge.ID].getCoords())] = fullGraph[tempID].getG() + edge.cost;
 
-				if(fullGraph[edge.ID].getCoords().theta!=0 && fullGraph[edge.ID].getCoords().x>0){
-					printf("expanded state is %d %d %d\n", fullGraph[edge.ID].getCoords().x, 
-						fullGraph[edge.ID].getCoords().y, fullGraph[edge.ID].getCoords().theta );
-					// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
-				}
-			}
-		}
+		// 		if(fullGraph[edge.ID].getCoords().theta!=0 && fullGraph[edge.ID].getCoords().x>0){
+		// 			printf("expanded state is %d %d %d\n", fullGraph[edge.ID].getCoords().x, 
+		// 				fullGraph[edge.ID].getCoords().y, fullGraph[edge.ID].getCoords().theta );
+		// 			// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
+		// 		}
+		// 	}
+		// }
 
 		if(open_set.top().getCoords() == coordsGoalDisc){
 			printf("target expanded\n");
@@ -204,10 +214,10 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 }
 
-int printConfiguration(double q[3], double x, void* user_data){//, std::vector<double>& x0, 
-	// std::vector<double>& y0) {
+int printConfiguration(double q[3], double x, std::vector<double>& x0, 
+	std::vector<double>& y0) {
 
-    // x0.push_back(q[0]); y0.push_back(q[1]);
+    x0.push_back(q[0]); y0.push_back(q[1]);
     printf("%f, %f, %f, %f\n", q[0], q[1], q[2], x);
     return 0;
 }
@@ -215,14 +225,11 @@ int printConfiguration(double q[3], double x, void* user_data){//, std::vector<d
 int main(int argc, char* argv[]){
 
 	const Coord coordsinit(2.0, 500.0, 0.0);
-	const Coord goalCoord(50, 650, PI/2);
+	const Coord goalCoord(12.0, 500, -PI); 
 
-	// std::vector<double> x0, y0;
-	// int printConfiguration(double q[3], double x, void* user_data);//, std::vector<double>& x0, 
-		// std::vector<double>& y0);
-
-	// // plt::plot(x0, y0);
- // //    plt::xlim(0, 400); plt::show();
+	std::vector<double> x0, y0;
+	int printConfiguration(double q[3], double x, std::vector<double>& x0, 
+		std::vector<double>& y0 );
 
 	double q0[] = { coordsinit.x, coordsinit.y, coordsinit.theta };
     double q1[] = { goalCoord.x, goalCoord.y, goalCoord.theta };
@@ -231,19 +238,24 @@ int main(int argc, char* argv[]){
     dubins_shortest_path( &path, q0, q1, turning_radius);
 
     double init_h = dubins_path_length( &path );
-    // dubins_path_sample_many( &path, 0.1, printConfiguration, NULL);
+    dubins_path_sample_many( &path, 0.1, printConfiguration, x0, y0);
 
-    std::stack <State> optPath = planner( coordsinit, goalCoord, "sbpl_prim.mprim" );
+    // plt::plot(x0, y0);
+    // plt::xlim(0, 400); plt::show();
+
+    std::stack <State> optPath = planner( coordsinit, goalCoord, "prim_test.mprim" );
 	printf("optPath.size() is %d \n", optPath.size());
 
 	printf("initial h_val is %lf\n", init_h);
 	int pathSize = optPath.size();
 
-	std::vector<double> x(optPath.size()), y(optPath.size());//, z(n), w(n,2);
+	std::vector<double> x(optPath.size()), y(optPath.size()), u(optPath.size()), v(optPath.size());//, z(n), w(n,2);
 	for(int i=0; i<pathSize;i++){
 
 		x.at(i) = DiscXY2Cont( optPath.top().getX() , graph_dx);
 		y.at(i) = DiscXY2Cont( optPath.top().getY(), graph_dy);
+		u.at(i) = cos( DiscTheta2Cont(optPath.top().getTheta(), numAngles ) );
+		v.at(i) = sin( DiscTheta2Cont(optPath.top().getTheta(), numAngles ) );
 		// printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
 
 		optPath.pop();
@@ -254,7 +266,8 @@ int main(int argc, char* argv[]){
 	// Set the size of output image to 1200x780 pixels
     plt::figure_size(1200, 780);
     // Plot line from given x and y data. Color is selected automatically.
-    plt::plot(x, y);
+    // plt::quiver(x, y, u, v);
+    plt::plot(x,y);
 
     plt::xlim(0, 400);
 

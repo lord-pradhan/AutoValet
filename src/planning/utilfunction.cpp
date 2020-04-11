@@ -111,22 +111,22 @@ void State::setG(double g_val_) {
 }
 void State::setH(CoordDisc goalDisc){
 
-    h_val = (double) sqrt( (coords.x - goalDisc.x)*(coords.x - goalDisc.x) + 
-        (coords.y - goalDisc.y)*(coords.y - goalDisc.y) + std::min( (coords.theta - goalDisc.theta)*
-        (coords.theta - goalDisc.theta), (16 - abs(coords.theta - goalDisc.theta))*
-        (16 - abs(coords.theta - goalDisc.theta)) ) );
+    // h_val = (double) sqrt( (coords.x - goalDisc.x)*(coords.x - goalDisc.x) + 
+    //     (coords.y - goalDisc.y)*(coords.y - goalDisc.y) + std::min( (coords.theta - goalDisc.theta)*
+    //     (coords.theta - goalDisc.theta), (16 - abs(coords.theta - goalDisc.theta))*
+    //     (16 - abs(coords.theta - goalDisc.theta)) ) );
     // std::cout<< "h_val is "<<h_val<<"\n";
 
-    // double q0[] = { DiscXY2Cont(coords.x,graph_dx), DiscXY2Cont(coords.y, graph_dy), 
-    //     DiscTheta2Cont(coords.theta, numAngles) };
+    double q0[] = { DiscXY2Cont(coords.x,graph_dx), DiscXY2Cont(coords.y, graph_dy), 
+        DiscTheta2Cont(coords.theta, numAngles) };
 
-    // double q1[] = { DiscXY2Cont(goalDisc.x, graph_dx), DiscXY2Cont(goalDisc.y, graph_dy), 
-    //     DiscTheta2Cont(goalDisc.theta, numAngles) };
+    double q1[] = { DiscXY2Cont(goalDisc.x, graph_dx), DiscXY2Cont(goalDisc.y, graph_dy), 
+        DiscTheta2Cont(goalDisc.theta, numAngles) };
 
-    // DubinsPath path;
-    // dubins_shortest_path(&path, q0, q1, 5.0);
+    DubinsPath path;
+    dubins_shortest_path(&path, q0, q1, 5.0);
 
-    // h_val = dubins_path_length( &path )/graph_dx;
+    h_val = dubins_path_length( &path )/graph_dx;
     // std::cout<< "dubins_path_length is "<< h_val<<"\n";
 }
 void State::expand() { expanded = true; return; }

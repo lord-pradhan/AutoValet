@@ -97,7 +97,8 @@ public:
 struct CompareF_pre{
     bool operator()(State const & s1, State const & s2) {
         // return "true" if "p1" is ordered before "p2", for example:
-        return s1.getG()+s1.getH() >  s2.getG()+s2.getH();
+        long int eps=1;
+        return s1.getG()+eps*s1.getH() >  s2.getG()+eps*s2.getH();
     }
 };
 

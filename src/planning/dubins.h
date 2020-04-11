@@ -22,6 +22,8 @@
 #ifndef DUBINS_H
 #define DUBINS_H
 
+#include <vector>
+
 typedef enum 
 {
     LSL = 0,
@@ -58,7 +60,8 @@ typedef struct
  * @note the user_data parameter is forwarded from the caller
  * @note return non-zero to denote sampling should be stopped
  */
-typedef int (*DubinsPathSamplingCallback)(double q[3], double t, void* user_data);
+typedef int (*DubinsPathSamplingCallback)(double q[3], double t, std::vector<double>& x0, 
+        std::vector<double>& y0);
 
 /**
  * Generate a path from an initial configuration to
@@ -146,7 +149,8 @@ int dubins_path_sample(DubinsPath* path, double t, double q[3]);
 int dubins_path_sample_many(DubinsPath* path, 
                             double stepSize, 
                             DubinsPathSamplingCallback cb, 
-                            void* user_data);
+                            std::vector<double>& x0, 
+                            std::vector<double>& y0);
 
 /**
  * Convenience function to identify the endpoint of a path
