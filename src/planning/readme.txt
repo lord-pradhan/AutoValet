@@ -1,1 +1,1 @@
-g++ -g planner.cpp utilfunction.cpp params.cpp -I/usr/include/python2.7 -lpython2.7 -I/home/lord-pradhan/.local/lib/python2.7/site-packages/numpy/core/include
+g++ -g planner.cpp utilfunction.cpp params.cpp dubins.c -I/usr/include/python2.7 -lpython2.7 -I/home/lord-pradhan/.local/lib/python2.7/site-packages/numpy/core/include

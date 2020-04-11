@@ -4,7 +4,7 @@
 #include <vector>
 #include <limits>
 #include <bits/stdc++.h> 
-#include "./Dubins-Curves/include/dubins.h"
+#include "dubins.h"
 
 
 #define  NORMALIZEDISCTHETA(THETA, THETADIRS) (((THETA>=0)?((THETA)%(THETADIRS)):(((THETA)%(THETADIRS)+THETADIRS)%THETADIRS)))
@@ -52,94 +52,6 @@ double wrap2pi(const double& theta_in){
 	return theta_out;
 }
 
-// everything for graph construction
-// std::vector<Primitive> getNextStates( Coord coordsIn  ){
-
-// 	std::vector<Primitive> primitives;
-
-// 	// straight - short (1)
-// 	Control in(vel_plan, 0.0);
-// 	double t_ahead = 1.0;
-// 	Primitive temp; 
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 1.0;
-// 	primitives.push_back( temp );
-
-// 	// straight - long (2)
-// 	// Control in(vel_plan, 0.0);
-// 	in.vel = vel_plan; in.curv = 0.0;
-// 	t_ahead = 2.0;
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 2.0;
-// 	primitives.push_back( temp );
-
-// 	// reverse - short (3)
-// 	// Control in(-vel_plan, 0.0);
-// 	in.vel = -vel_plan; in.curv = 0.0;
-// 	t_ahead = 1.0;
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 5.0;
-// 	primitives.push_back( temp );
-
-
-// 	// left - sharp (4)
-// 	// Control in( vel_plan, curv_lim );
-// 	in.vel = vel_plan; in.curv = curv_lim;
-// 	t_ahead = 0.5;
-// 	// Primitive temp; 
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 1.0;
-// 	primitives.push_back( temp );
-
-// 	// right - sharp (5)
-// 	// Control in( vel_plan, -curv_lim );
-// 	in.vel = vel_plan; in.curv = -curv_lim;
-// 	t_ahead = 0.5;
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 1.0;
-// 	primitives.push_back( temp );
-
-// 	// left - mild (6)
-// 	// Control in( vel_plan, curv_lim/2 );
-// 	in.vel = vel_plan; in.curv = curv_lim/2;
-// 	t_ahead = 0.7;
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 1.0;
-// 	primitives.push_back( temp );
-
-
-// 	// right - mild (7)
-// 	// Control in( vel_plan, -curv_lim/2 );
-// 	in.vel = vel_plan; in.curv = -curv_lim/2;
-// 	t_ahead = 0.7;
-// 	temp.coord_final = motionRollout( coordsIn, in, t_ahead );
-// 	temp.cost = 1.0;
-// 	primitives.push_back( temp );
-
-// 	return primitives;
-// }
-
-
-// Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead ){
-
-// 	double x_end = coordsIn.x, y_end = coordsIn.y, theta_end=coordsIn.theta;
-// 	for(int i = 0; i < std::round((double) time_ahead/euler_dt); i++ ){
-
-// 		theta_end += euler_dt * controlIn.vel * controlIn.curv;
-// 		// printf("theta_end is %lf \n", theta_end);
-// 		x_end += euler_dt * controlIn.vel * cos(theta_end);
-// 		// printf("x_end is %lf \n", x_end);
-// 		y_end += euler_dt * controlIn.vel * sin(theta_end); 
-// 		// printf("y_end is %lf \n", y_end);
-
-// 		// insert collision checking here
-// 	}
-
-// 	Coord coordOut(x_end, y_end, theta_end); 
-// 	// coordOut.x = x_end; coordOut.y = y_end; coordOut.theta = theta_end;
-// 	coordOut.snapToGrid();
-// 	return coordOut;
-// }
 
 bool Coord::operator==(const Coord &obj){
 
@@ -158,31 +70,6 @@ bool CoordDisc::operator==(const CoordDisc &obj){
 		return false;
 }
 
-// void Coord::snapToGrid(){
-
-// 	//snap to grid
-// 	double offset_x = fmod(x, graph_dx);
-// 	// printf("offset_x is %lf \n", offset_x); 
-// 	double offset_y = fmod(y, graph_dy);
-// 	// printf("offset_y is %lf \n", offset_y); 
-// 	double offset_theta = fmod(theta, graph_dtheta);
-// 	// printf("offset_theta is %lf \n", offset_theta); 
-
-// 	if(offset_x > graph_dx/2)
-// 		x += graph_dx - offset_x;
-// 	else
-// 		x -= offset_x;
-
-// 	if(offset_y > graph_dy/2)
-// 		y += graph_dy - offset_x;
-// 	else
-// 		y -= offset_y;
-
-// 	if(offset_theta > graph_dtheta/2)
-// 		theta += graph_dtheta - offset_theta;
-// 	else
-// 		theta -= offset_theta;
-// }
 
 //// State class ///////
 State::State(): expanded(false){
@@ -223,27 +110,28 @@ void State::setG(double g_val_) {
 	g_val = g_val_;
 }
 void State::setH(CoordDisc goalDisc){
+
     h_val = (double) sqrt( (coords.x - goalDisc.x)*(coords.x - goalDisc.x) + 
-        (coords.y - goalDisc.y)*(coords.y - goalDisc.y) );
+        (coords.y - goalDisc.y)*(coords.y - goalDisc.y) + std::min( (coords.theta - goalDisc.theta)*
+        (coords.theta - goalDisc.theta), (16 - abs(coords.theta - goalDisc.theta))*
+        (16 - abs(coords.theta - goalDisc.theta)) ) );
+    // std::cout<< "h_val is "<<h_val<<"\n";
+
+    // double q0[] = { DiscXY2Cont(coords.x,graph_dx), DiscXY2Cont(coords.y, graph_dy), 
+    //     DiscTheta2Cont(coords.theta, numAngles) };
+
+    // double q1[] = { DiscXY2Cont(goalDisc.x, graph_dx), DiscXY2Cont(goalDisc.y, graph_dy), 
+    //     DiscTheta2Cont(goalDisc.theta, numAngles) };
+
+    // DubinsPath path;
+    // dubins_shortest_path(&path, q0, q1, 5.0);
+
+    // h_val = dubins_path_length( &path )/graph_dx;
+    // std::cout<< "dubins_path_length is "<< h_val<<"\n";
 }
 void State::expand() { expanded = true; return; }
 void State::setID(int listID_) { listID = listID_; }
 void State::addAdjElem(GraphEdge adjElem_){adjElems.push_back(adjElem_);}
-
-
-////// Primitive class ////////
-// Coord Primitive::applyPrimEnd( Coord poseIn ){
-
-// 	Coord poseOut;
-// 	if( !x_vect.empty() && !y_vect.empty() && !theta_vect.empty() ){
-
-// 		poseOut.x = poseIn.x + x_vect.back();
-// 		poseOut.y = poseIn.y + y_vect.back();
-// 		poseOut.theta = wrap2pi(poseIn.theta + theta_vect.back());
-// 	}
-// 	return poseOut;
-// }
-
 
 
 

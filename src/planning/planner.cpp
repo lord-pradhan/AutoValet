@@ -21,6 +21,7 @@ using namespace std::chrono;
 using namespace std;
 #include "./matplotlib-cpp/matplotlibcpp.h"
 #include <cmath>
+#include "dubins.h"
 
 namespace plt = matplotlibcpp;
 
@@ -91,8 +92,8 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	std::priority_queue< State, vector<State>, CompareF_pre> open_set;
 	open_set.push(fullGraph[0]);
 
-	std::unordered_set<int> lookUpState;
-	lookUpState.insert(GetIndex(fullGraph[0].getCoords()));
+	std::unordered_map<int, double> lookUpG;
+	lookUpG[GetIndex(fullGraph[0].getCoords())] = 0.0;
 
 	while( !open_set.empty() && !( open_set.top().getCoords() == coordsGoalDisc ) ){
 
@@ -119,24 +120,29 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 				if(freeState(tempPose) ){// && (lookUpState.find(GetIndex(tempPose)) == lookUpState.end()) ){
 
-					State newState(tempPose);
-					newState.setH(coordsGoalDisc);
-					newState.setID(elemCt);
+					if( (lookUpG.find(GetIndex(tempPose)) == lookUpG.end())  || 
+						( lookUpG[GetIndex(tempPose)] > fullGraph[tempID].getG() + i.cost ) ){
 
-					GraphEdge exToNew, newToEx;
+						State newState(tempPose);
+						newState.setH(coordsGoalDisc);
+						newState.setID(elemCt);
 
-					newToEx.ID = tempID;
-					newToEx.cost = i.cost;
-					// printf("newToEx.cost is %lf \n", i.cost);
-					newState.addAdjElem(newToEx);
+						GraphEdge exToNew, newToEx;
 
-					exToNew.ID = elemCt;
-					exToNew.cost= i.cost;
-					fullGraph[tempID].addAdjElem(exToNew);
+						newToEx.ID = tempID;
+						newToEx.cost = i.cost;
+						// printf("newToEx.cost is %lf \n", i.cost);
+						newState.addAdjElem(newToEx);
 
-					fullGraph.push_back(newState);
-					elemCt++;
-					lookUpState.insert(GetIndex(newState.getCoords()));
+						exToNew.ID = elemCt;
+						exToNew.cost= i.cost;
+						fullGraph[tempID].addAdjElem(exToNew);
+
+						fullGraph.push_back(newState);
+						elemCt++;
+						// lookUpState.insert(GetIndex(newState.getCoords()));
+					}
+
 				}
 			}			
 		}
@@ -150,10 +156,12 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 				fullGraph[edge.ID].setG( fullGraph[tempID].getG() + edge.cost );
 				open_set.push(fullGraph[edge.ID]);
 				fullGraph[edge.ID].expand();
+				lookUpG[GetIndex(fullGraph[edge.ID].getCoords())] = fullGraph[tempID].getG() + edge.cost;
+
 				if(fullGraph[edge.ID].getCoords().theta!=0 && fullGraph[edge.ID].getCoords().x>0){
 					printf("expanded state is %d %d %d\n", fullGraph[edge.ID].getCoords().x, 
 						fullGraph[edge.ID].getCoords().y, fullGraph[edge.ID].getCoords().theta );
-					printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
+					// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
 				}
 			}
 		}
@@ -196,15 +204,39 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
 }
 
+int printConfiguration(double q[3], double x, void* user_data){//, std::vector<double>& x0, 
+	// std::vector<double>& y0) {
+
+    // x0.push_back(q[0]); y0.push_back(q[1]);
+    printf("%f, %f, %f, %f\n", q[0], q[1], q[2], x);
+    return 0;
+}
 
 int main(int argc, char* argv[]){
 
 	const Coord coordsinit(2.0, 500.0, 0.0);
-	const Coord goalCoord(300, 700, 0.0);
+	const Coord goalCoord(50, 650, PI/2);
 
-	std::stack <State> optPath = planner( coordsinit, goalCoord, "sbpl_prim.mprim" );
+	// std::vector<double> x0, y0;
+	// int printConfiguration(double q[3], double x, void* user_data);//, std::vector<double>& x0, 
+		// std::vector<double>& y0);
+
+	// // plt::plot(x0, y0);
+ // //    plt::xlim(0, 400); plt::show();
+
+	double q0[] = { coordsinit.x, coordsinit.y, coordsinit.theta };
+    double q1[] = { goalCoord.x, goalCoord.y, goalCoord.theta };
+    double turning_radius = 6.0;
+    DubinsPath path;
+    dubins_shortest_path( &path, q0, q1, turning_radius);
+
+    double init_h = dubins_path_length( &path );
+    // dubins_path_sample_many( &path, 0.1, printConfiguration, NULL);
+
+    std::stack <State> optPath = planner( coordsinit, goalCoord, "sbpl_prim.mprim" );
 	printf("optPath.size() is %d \n", optPath.size());
 
+	printf("initial h_val is %lf\n", init_h);
 	int pathSize = optPath.size();
 
 	std::vector<double> x(optPath.size()), y(optPath.size());//, z(n), w(n,2);
@@ -212,7 +244,7 @@ int main(int argc, char* argv[]){
 
 		x.at(i) = DiscXY2Cont( optPath.top().getX() , graph_dx);
 		y.at(i) = DiscXY2Cont( optPath.top().getY(), graph_dy);
-		printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
+		// printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
 
 		optPath.pop();
 	}
