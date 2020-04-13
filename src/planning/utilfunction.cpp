@@ -15,7 +15,7 @@
 
 bool freeState( CoordDisc coordsIn ){
 
-    double x_ul = 100, x_ll = 0, y_ul = 100, y_ll = 0;
+    double x_ul = 1000, x_ll = 0, y_ul = 1000, y_ll = 0;
     double x= DISCXY2CONT(coordsIn.x, graph_dx), y = DISCXY2CONT(coordsIn.y, graph_dy);
     // double theta = DiscTheta2Cont(coordsIn.theta, numAngles);
 
@@ -23,12 +23,12 @@ bool freeState( CoordDisc coordsIn ){
 
         return false;
     }
-    else if(x<50 && y<62 && y>55 ){
-        return false;
-    }
-    else if( x>50 && y<42 && y>35 ){
-        return false;
-    }
+    // else if(x<50 && y<62 && y>55 ){
+    //     return false;
+    // }
+    // else if( x>50 && y<42 && y>35 ){
+    //     return false;
+    // }
 
     return true;
 }

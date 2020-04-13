@@ -224,8 +224,8 @@ int printConfiguration(double q[3], double x, std::vector<double>& x0,
 
 int main(int argc, char* argv[]){
 
-	const Coord coordsinit(2.0, 82.0, 0.0);
-	const Coord goalCoord(38.0, 15, -PI/2); 
+	const Coord coordsinit(40.0, 820.0, 0.0);
+	const Coord goalCoord(80.0, 750, PI/2); 
 
 	std::vector<double> x0, y0;
 	int printConfiguration(double q[3], double x, std::vector<double>& x0, 
@@ -267,31 +267,31 @@ int main(int argc, char* argv[]){
 		optPath.pop();
 	}
 
-	std::vector<double> x_obstacle, y_obstacle;
-	x_obstacle.push_back(0); y_obstacle.push_back(55);
-	x_obstacle.push_back(50); y_obstacle.push_back(55);
-	x_obstacle.push_back(50); y_obstacle.push_back(60);
-	x_obstacle.push_back(0); y_obstacle.push_back(60);
+	// std::vector<double> x_obstacle, y_obstacle;
+	// x_obstacle.push_back(0); y_obstacle.push_back(55);
+	// x_obstacle.push_back(50); y_obstacle.push_back(55);
+	// x_obstacle.push_back(50); y_obstacle.push_back(60);
+	// x_obstacle.push_back(0); y_obstacle.push_back(60);
 
-	std::vector<double> x_obstacle1, y_obstacle1;
-	x_obstacle1.push_back(100); y_obstacle1.push_back(35);
-	x_obstacle1.push_back(50); y_obstacle1.push_back(35);
-	x_obstacle1.push_back(50); y_obstacle1.push_back(40);
-	x_obstacle1.push_back(100); y_obstacle1.push_back(40);
+	// std::vector<double> x_obstacle1, y_obstacle1;
+	// x_obstacle1.push_back(100); y_obstacle1.push_back(35);
+	// x_obstacle1.push_back(50); y_obstacle1.push_back(35);
+	// x_obstacle1.push_back(50); y_obstacle1.push_back(40);
+	// x_obstacle1.push_back(100); y_obstacle1.push_back(40);
 
 	// Set the size of output image to 1200x780 pixels
     plt::figure_size(1200, 780);
 
-    plt::plot(x_obstacle, y_obstacle,"r");
-    plt::plot(x_obstacle1, y_obstacle1,"r");
+    // plt::plot(x_obstacle, y_obstacle,"r");
+    // plt::plot(x_obstacle1, y_obstacle1,"r");
 
     std::map<std::string, std::string> keywords;
     // keywords["scale"]=1;
-    plt::plot(x, y);//, u, v);//, 'width', 0.05, 'length', 0.1);
+    plt::quiver(x, y, u, v);//, 'width', 0.05, 'length', 0.1);
     plt::title("Car navigating a dummy parking-lot (top-view)");
     // plt::plot(x,y);
 
-    plt::xlim(0, 100);
+    plt::xlim(0, 1000);
 
     plt::show();
 }
