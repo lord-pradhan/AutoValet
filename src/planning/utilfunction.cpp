@@ -15,7 +15,7 @@
 
 bool freeState( CoordDisc coordsIn ){
 
-    double x_ul = 1000, x_ll = 0, y_ul = 1000, y_ll = 0;
+    double x_ul = 100, x_ll = 0, y_ul = 100, y_ll = 0;
     double x= DISCXY2CONT(coordsIn.x, graph_dx), y = DISCXY2CONT(coordsIn.y, graph_dy);
     // double theta = DiscTheta2Cont(coordsIn.theta, numAngles);
 
@@ -23,12 +23,12 @@ bool freeState( CoordDisc coordsIn ){
 
         return false;
     }
-    // else if(x<50 && y<62 && y>55 ){
-    //     return false;
-    // }
-    // else if( x>50 && y<42 && y>35 ){
-    //     return false;
-    // }
+    else if(x<40 && y<62 && y>55 ){
+        return false;
+    }
+    else if( x>50 && y<42 && y>35 ){
+        return false;
+    }
 
     return true;
 }
@@ -177,7 +177,7 @@ bool ReadMotionPrimitives(FILE* fMotPrims, MPrimFile& readFile){
     if (fscanf(fMotPrims, "%s", sTemp) == 0) {
         return false;
     }
-    printf("sTemp: %s\n", sTemp);
+    // printf("sTemp: %s\n", sTemp);
 
     // read in the angular resolution
     strcpy(sExpected, "numberofangles:");
@@ -189,7 +189,7 @@ bool ReadMotionPrimitives(FILE* fMotPrims, MPrimFile& readFile){
         return false;
     }
 
-    printf("numberofangles: %d\n", dTemp);
+    // printf("numberofangles: %d\n", dTemp);
     readFile.numAngles = dTemp;
 
 
@@ -237,7 +237,7 @@ bool ReadinMotionPrimitive( Primitive& pMotPrim, FILE* fIn){
         return false;
     }
     if (strcmp(sTemp, sExpected) != 0) {
-        printf("ERROR: expected %s but got %s\n", sExpected, sTemp);
+        // printf("ERROR: expected %s but got %s\n", sExpected, sTemp);
         fflush(stdout);
         return false;
     }
