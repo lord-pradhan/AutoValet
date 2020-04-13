@@ -85,7 +85,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	fullGraph.push_back(state_init);
 	elemCt++;
 
-	// initiate graph search using Dijkstraa's
+	// initiate graph search using A* //
 	fullGraph[0].setG(0.0);
 	int finID;
 
@@ -147,11 +147,11 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 						lookUpG[GetIndex(fullGraph[elemCt-1].getCoords())] = fullGraph[tempID].getG() + i.cost;
 						// lookUpState.insert(GetIndex(newState.getCoords()));
 
-						if(fullGraph[elemCt-1].getCoords().theta!=0 && fullGraph[elemCt-1].getCoords().x>0){
-							printf("expanded state is %d %d %d\n", fullGraph[elemCt-1].getCoords().x, 
-								fullGraph[elemCt-1].getCoords().y, fullGraph[elemCt-1].getCoords().theta );
-							// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
-						}
+						// if(fullGraph[elemCt-1].getCoords().theta!=0 && fullGraph[elemCt-1].getCoords().x>0){
+						// 	printf("expanded state is %d %d %d\n", fullGraph[elemCt-1].getCoords().x, 
+						// 		fullGraph[elemCt-1].getCoords().y, fullGraph[elemCt-1].getCoords().theta );
+						// 	// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
+						// }
 					}
 				}
 			}			
@@ -224,8 +224,8 @@ int printConfiguration(double q[3], double x, std::vector<double>& x0,
 
 int main(int argc, char* argv[]){
 
-	const Coord coordsinit(2.0, 500.0, 0.0);
-	const Coord goalCoord(12.0, 500, -PI); 
+	const Coord coordsinit(2.0, 82.0, 0.0);
+	const Coord goalCoord(38.0, 15, -PI/2); 
 
 	std::vector<double> x0, y0;
 	int printConfiguration(double q[3], double x, std::vector<double>& x0, 
@@ -242,34 +242,56 @@ int main(int argc, char* argv[]){
 
     // plt::plot(x0, y0);
     // plt::xlim(0, 400); plt::show();
-
+	auto start = high_resolution_clock::now();
     std::stack <State> optPath = planner( coordsinit, goalCoord, "prim_test.mprim" );
+    auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<milliseconds>(stop - start);
+	printf("Duration is %d \n", duration.count());
+
 	printf("optPath.size() is %d \n", optPath.size());
 
 	printf("initial h_val is %lf\n", init_h);
 	int pathSize = optPath.size();
 
-	std::vector<double> x(optPath.size()), y(optPath.size()), u(optPath.size()), v(optPath.size());//, z(n), w(n,2);
+	///// Plotting ///////
+	std::vector<double> x, y, u, v;//, z(n), w(n,2);
+	
 	for(int i=0; i<pathSize;i++){
 
-		x.at(i) = DiscXY2Cont( optPath.top().getX() , graph_dx);
-		y.at(i) = DiscXY2Cont( optPath.top().getY(), graph_dy);
-		u.at(i) = cos( DiscTheta2Cont(optPath.top().getTheta(), numAngles ) );
-		v.at(i) = sin( DiscTheta2Cont(optPath.top().getTheta(), numAngles ) );
+		x.push_back(DiscXY2Cont( optPath.top().getX() , graph_dx));
+		y.push_back(DiscXY2Cont( optPath.top().getY(), graph_dy));
+		u.push_back(cos( DiscTheta2Cont(optPath.top().getTheta(), numAngles ) ));
+		v.push_back(sin( DiscTheta2Cont(optPath.top().getTheta(), numAngles ) ));
 		// printf("x.at(i) is %lf\n y.at(i) is %lf \n", x.at(i), y.at(i));
 
 		optPath.pop();
 	}
-	printf("goal coords are %d %d %d\n",  ContXY2Disc(goalCoord.x, graph_dx), ContXY2Disc(goalCoord.y, graph_dy),
-	ContTheta2Disc(goalCoord.theta, numAngles));
+
+	std::vector<double> x_obstacle, y_obstacle;
+	x_obstacle.push_back(0); y_obstacle.push_back(55);
+	x_obstacle.push_back(50); y_obstacle.push_back(55);
+	x_obstacle.push_back(50); y_obstacle.push_back(60);
+	x_obstacle.push_back(0); y_obstacle.push_back(60);
+
+	std::vector<double> x_obstacle1, y_obstacle1;
+	x_obstacle1.push_back(100); y_obstacle1.push_back(35);
+	x_obstacle1.push_back(50); y_obstacle1.push_back(35);
+	x_obstacle1.push_back(50); y_obstacle1.push_back(40);
+	x_obstacle1.push_back(100); y_obstacle1.push_back(40);
 
 	// Set the size of output image to 1200x780 pixels
     plt::figure_size(1200, 780);
-    // Plot line from given x and y data. Color is selected automatically.
-    // plt::quiver(x, y, u, v);
-    plt::plot(x,y);
 
-    plt::xlim(0, 400);
+    plt::plot(x_obstacle, y_obstacle,"r");
+    plt::plot(x_obstacle1, y_obstacle1,"r");
+
+    std::map<std::string, std::string> keywords;
+    // keywords["scale"]=1;
+    plt::plot(x, y);//, u, v);//, 'width', 0.05, 'length', 0.1);
+    plt::title("Car navigating a dummy parking-lot (top-view)");
+    // plt::plot(x,y);
+
+    plt::xlim(0, 100);
 
     plt::show();
 }

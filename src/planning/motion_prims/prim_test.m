@@ -3,7 +3,7 @@ num_angles=16;
 Rmin = 5.0;
 
 forward_cost = 1;
-backward_cost = 5;
+backward_cost = 8;
 turn_cost = 3;
 short_segment_cost = 3;
 
