@@ -54,6 +54,21 @@ public:
 	double cost;
 };
 
+// // backwards Dijkstra
+class State_pre{
+
+public:
+	CoordDisc coords;
+	double G_val;
+	bool expanded;
+
+	State_pre( CoordDisc coordsIn, double G_valIn ): coords(coordsIn), G_val(G_valIn){}
+
+	State_pre(): G_val(std::numeric_limits<double>::infinity()), expanded(false) {}
+};
+
+
+
 //// graph state /////
 class State{
 private:	
@@ -83,7 +98,7 @@ public:
 	void setTheta(int theta_);
 	void setCoords(CoordDisc coordsIn);
 	void setG(double g_val_);
-	void setH(CoordDisc goalDisc);
+	void setH(CoordDisc goalDisc, double h_env);
 	void expand();
 	void setID(int listID_);
 	void addAdjElem(GraphEdge elemIn);
@@ -91,11 +106,19 @@ public:
 
 
 ///// compare struct for the priority queue /////
-struct CompareF_pre{
+struct CompareF{
     bool operator()(State const & s1, State const & s2) {
         // return "true" if "p1" is ordered before "p2", for example:
-        long int eps=1;
+        long int eps=2;
         return s1.getG()+eps*s1.getH() >  s2.getG()+eps*s2.getH();
+    }
+};
+
+struct CompareF_pre{
+    bool operator()(State_pre const & s1, State_pre const & s2) {
+        // return "true" if "p1" is ordered before "p2", for example:
+        long int eps=1;
+        return s1.G_val >  s2.G_val;
     }
 };
 

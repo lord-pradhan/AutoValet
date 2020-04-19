@@ -1,13 +1,13 @@
 resolution=0.1;
 num_angles=16;
-Rmin = 4.0;
+Rmin = 2;
 
-forward_cost = 1;
-backward_cost = 5;
-turn_cost = 3;
-short_segment_cost = 3;
+forward_cost = 10;
+backward_cost = 50;
+turn_cost = 30;
+% short_segment_cost = ;
 
-ntraj=14
+ntraj=14;
 points = zeros(ntraj, 3);
 costs = zeros(ntraj,1);
 
@@ -25,7 +25,7 @@ costs = zeros(ntraj,1);
 x0=10;
 
 %R1
-x1=10;
+x1=16;
 y1=4;
 
 %R2

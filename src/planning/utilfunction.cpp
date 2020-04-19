@@ -23,10 +23,10 @@ bool freeState( CoordDisc coordsIn ){
 
         return false;
     }
-    else if(x<70 && y<62 && y>55 ){
+    else if(x<80 && y<62 && y>55 ){
         return false;
     }
-    else if( x>30 && y<42 && y>35 ){
+    else if( x>20 && y<42 && y>35 ){
         return false;
     }
 
@@ -115,7 +115,7 @@ void State::setCoords(CoordDisc coordsIn){ coords = coordsIn; }
 void State::setG(double g_val_) { 
 	g_val = g_val_;
 }
-void State::setH(CoordDisc goalDisc){
+void State::setH(CoordDisc goalDisc, double h_env){
 
     // h_val = (double) sqrt( (coords.x - goalDisc.x)*(coords.x - goalDisc.x) + 
     //     (coords.y - goalDisc.y)*(coords.y - goalDisc.y) + std::min( (coords.theta - goalDisc.theta)*
@@ -132,8 +132,11 @@ void State::setH(CoordDisc goalDisc){
     DubinsPath path;
     dubins_shortest_path(&path, q0, q1, 5.0);
 
-    h_val = dubins_path_length( &path )/graph_dx;
-    // std::cout<< "dubins_path_length is "<< h_val<<"\n";
+    double h_dub = dubins_path_length( &path )/graph_dx;
+    // double h_env = gridmap_pre[goalDisc.y][goalDisc.x].G_val;
+    h_val = std::max(h_dub, h_env);    
+    // std::cout<< "dubins_path_length is "<< h_dub<<"\n";
+    // std::cout<< "env heuristic is "<< h_env <<"\n";
 }
 void State::expand() { expanded = true; return; }
 void State::setID(int listID_) { listID = listID_; }
