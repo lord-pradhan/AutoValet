@@ -23,7 +23,7 @@ bool freeState( CoordDisc coordsIn ){
 
         return false;
     }
-    else if(x<60 && y<62 && y>55 ){
+    else if(x<70 && y<62 && y>55 ){
         return false;
     }
     else if( x>30 && y<42 && y>35 ){
@@ -447,9 +447,11 @@ int ContXY2Disc(double val, double resolution){
 }
 // CONTXY2DISC(X, CELLSIZE) (((X)>=0)?((int)((X)/(CELLSIZE))):((int)((X)/(CELLSIZE))-1))
 
-int GetIndex(CoordDisc coordsIn){
+unsigned long long int GetIndex(CoordDisc coordsIn){
 
     // x = x_abs - x_r; y = y_abs - y_r; t = t_as - t_r;
     int x = coordsIn.x, y = coordsIn.y, theta = coordsIn.theta;
-    return theta*(2*theta-1)*(2*theta+1)/3 + (y+theta)*(2*theta+1) + x + theta;
+
+    return floor( 1000000* (sqrt(2)*x + sqrt(5)*y + sqrt(11)*theta) );
+    // return theta*(2*theta-1)*(2*theta+1)/3 + (y+theta)*(2*theta+1) + x + theta;
 }

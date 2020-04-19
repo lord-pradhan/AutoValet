@@ -54,9 +54,6 @@ public:
 	double cost;
 };
 
-
-
-
 //// graph state /////
 class State{
 private:	
@@ -150,7 +147,7 @@ double DiscTheta2Cont(int nTheta, int NUMOFANGLEVALS);
 
 double normalizeAngle(double angle);
 
-int GetIndex(CoordDisc coordsIn);
+unsigned long long int GetIndex(CoordDisc coordsIn);
 
 int ContXY2Disc(double val, double resolution);
 

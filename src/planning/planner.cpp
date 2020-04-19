@@ -61,13 +61,13 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	if (sMotPrimFile != NULL) {
         FILE* fMotPrim = fopen(sMotPrimFile, "r");
         if (fMotPrim == NULL) {
-            // std::stringstream ss;
-            // ss << "ERROR: unable to open " << sMotPrimFile;
+            std::stringstream ss;
+            ss << "ERROR: unable to open " << sMotPrimFile;
             printf("unable to open \n"); 
         }
 
         if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
-            // printf("ERROR: failed to read in motion primitive file");
+            printf("ERROR: failed to read in motion primitive file");
             // return;
         }
         fclose(fMotPrim);
@@ -76,6 +76,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	//initialise vars
 	int elemCt = 0;
 	std::vector<State> fullGraph;
+
 
 	// initial conditions
 	State state_init(coordsInitDisc);
@@ -91,15 +92,15 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 	std::priority_queue< State, vector<State>, CompareF_pre> open_set;
 	open_set.push(fullGraph[0]);
 
-	std::unordered_map<int, double> lookUpG;
-	lookUpG[GetIndex(fullGraph[0].getCoords())] = 0.0;
+	std::unordered_set<unsigned long long int> closed_set;
+	// lookUpG[GetIndex(fullGraph[0].getCoords())] = 0.0;
 
 	while( !open_set.empty() && !( open_set.top().getCoords() == coordsGoalDisc ) ){
 
 		// generate primitives
 		State temp = open_set.top();
 		int tempID = open_set.top().getID();
-		fullGraph[tempID].expand();
+		closed_set.insert(GetIndex(temp.getCoords()));
 
 		open_set.pop();
 
@@ -111,69 +112,34 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 				CoordDisc tempPose;
 				tempPose.x = temp.getCoords().x + i.endPose.x;
 				tempPose.y = temp.getCoords().y + i.endPose.y;
-				// angle wrap
-				// tempPose.theta = ContTheta2Disc( wrap2pi( DiscTheta2Cont( tempPose.theta, numAngles ) ),
-				// 					 numAngles );
 				tempPose.theta = i.endPose.theta;
 				// printf("tempPose is %d %d %d\n", tempPose.x, tempPose.y, tempPose.theta);
 
-				if(freeState(tempPose) ){// && (lookUpState.find(GetIndex(tempPose)) == lookUpState.end()) ){
+				if( freeState(tempPose) && (closed_set.find(GetIndex(tempPose))==closed_set.end()) ){
 
-					if( (lookUpG.find(GetIndex(tempPose)) == lookUpG.end())  || 
-						( lookUpG[GetIndex(tempPose)] > fullGraph[tempID].getG() + i.cost ) ){
+					State newState(tempPose);
+					newState.setH(coordsGoalDisc);
+					newState.setID(elemCt);
 
-						State newState(tempPose);
-						newState.setH(coordsGoalDisc);
-						newState.setID(elemCt);
+					GraphEdge exToNew, newToEx;
 
-						GraphEdge exToNew, newToEx;
+					newToEx.ID = tempID;
+					newToEx.cost = i.cost;
+					// printf("newToEx.cost is %lf \n", i.cost);
+					newState.addAdjElem(newToEx);
 
-						newToEx.ID = tempID;
-						newToEx.cost = i.cost;
-						// printf("newToEx.cost is %lf \n", i.cost);
-						newState.addAdjElem(newToEx);
+					exToNew.ID = elemCt;
+					exToNew.cost= i.cost;
+					fullGraph[tempID].addAdjElem(exToNew);
 
-						exToNew.ID = elemCt;
-						exToNew.cost= i.cost;
-						fullGraph[tempID].addAdjElem(exToNew);
+					fullGraph.push_back(newState);
+					elemCt++;
 
-						fullGraph.push_back(newState);
-						elemCt++;
-
-						fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost );
-						open_set.push(fullGraph[elemCt-1]);
-						fullGraph[elemCt-1].expand();
-						lookUpG[GetIndex(fullGraph[elemCt-1].getCoords())] = fullGraph[tempID].getG() + i.cost;
-						// lookUpState.insert(GetIndex(newState.getCoords()));
-
-						// if(fullGraph[elemCt-1].getCoords().theta!=0 && fullGraph[elemCt-1].getCoords().x>0){
-						// 	printf("expanded state is %d %d %d\n", fullGraph[elemCt-1].getCoords().x, 
-						// 		fullGraph[elemCt-1].getCoords().y, fullGraph[elemCt-1].getCoords().theta );
-						// 	// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
-						// }
-					}
+					fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost );
+					open_set.push(fullGraph[elemCt-1]);					
 				}
 			}			
 		}
-
-		// printf("size of fullGraph[tempID].getAdjElems() is %d\n", fullGraph[tempID].getAdjElems().size());
-		// for(auto edge : fullGraph[tempID].getAdjElems()){
-
-		// 	if( (fullGraph[edge.ID].getG() > fullGraph[tempID].getG() + edge.cost) ){ //&& 
-		// 		// !(fullGraph[edge.ID].getExpanded() ) ){
-
-		// 		fullGraph[edge.ID].setG( fullGraph[tempID].getG() + edge.cost );
-		// 		open_set.push(fullGraph[edge.ID]);
-		// 		fullGraph[edge.ID].expand();
-		// 		lookUpG[GetIndex(fullGraph[edge.ID].getCoords())] = fullGraph[tempID].getG() + edge.cost;
-
-		// 		if(fullGraph[edge.ID].getCoords().theta!=0 && fullGraph[edge.ID].getCoords().x>0){
-		// 			printf("expanded state is %d %d %d\n", fullGraph[edge.ID].getCoords().x, 
-		// 				fullGraph[edge.ID].getCoords().y, fullGraph[edge.ID].getCoords().theta );
-		// 			// printf("G-value during graph search is %lf\n", fullGraph[tempID].getG() + edge.cost);
-		// 		}
-		// 	}
-		// }
 
 		if(open_set.top().getCoords() == coordsGoalDisc){
 			printf("\nTarget expanded\n");
