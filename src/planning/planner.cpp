@@ -5,7 +5,6 @@
  *=================================================================*/
 #include <iostream>
 #include <math.h>
-// #include <mex.h>
 #include <array>
 #include <queue>
 #include <vector>
@@ -68,7 +67,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
         }
 
         if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
-            printf("ERROR: failed to read in motion primitive file");
+            // printf("ERROR: failed to read in motion primitive file");
             // return;
         }
         fclose(fMotPrim);
@@ -177,7 +176,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 		// }
 
 		if(open_set.top().getCoords() == coordsGoalDisc){
-			printf("target expanded\n");
+			printf("\nTarget expanded\n");
 		}
 	}
 
@@ -203,11 +202,11 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 			}
 			optPath.push( fullGraph[optID] );
 		}
-		printf("optPath.size() is %d \n", optPath.size());
+		printf("Path found! \n");
 	}
 	else{
 
-		printf("open set is empty, exiting\n");
+		printf("Open set is empty, path can't be found. Exiting\n");
 	}
 
 	return optPath;
@@ -224,21 +223,21 @@ int printConfiguration(double q[3], double x, std::vector<double>& x0,
 
 int main(int argc, char* argv[]){
 
-	const Coord coordsinit(40.0, 820.0, 0.0);
-	const Coord goalCoord(80.0, 750, PI/2); 
+	const Coord coordsinit(2.0, 82.0, 0.0);
+	const Coord goalCoord(38.0, 10, -PI/2); 
 
 	std::vector<double> x0, y0;
 	int printConfiguration(double q[3], double x, std::vector<double>& x0, 
 		std::vector<double>& y0 );
 
-	double q0[] = { coordsinit.x, coordsinit.y, coordsinit.theta };
-    double q1[] = { goalCoord.x, goalCoord.y, goalCoord.theta };
-    double turning_radius = 6.0;
-    DubinsPath path;
-    dubins_shortest_path( &path, q0, q1, turning_radius);
+	// double q0[] = { coordsinit.x, coordsinit.y, coordsinit.theta };
+ //    double q1[] = { goalCoord.x, goalCoord.y, goalCoord.theta };
+ //    double turning_radius = 6.0;
+ //    DubinsPath path;
+ //    dubins_shortest_path( &path, q0, q1, turning_radius);
 
-    double init_h = dubins_path_length( &path );
-    dubins_path_sample_many( &path, 0.1, printConfiguration, x0, y0);
+ //    double init_h = dubins_path_length( &path );
+ //    dubins_path_sample_many( &path, 0.1, printConfiguration, x0, y0);
 
     // plt::plot(x0, y0);
     // plt::xlim(0, 400); plt::show();
@@ -246,11 +245,11 @@ int main(int argc, char* argv[]){
     std::stack <State> optPath = planner( coordsinit, goalCoord, "prim_test.mprim" );
     auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);
-	printf("Duration is %d \n", duration.count());
+	printf("Time taken for computation is %d milliseconds\n", duration.count());
 
-	printf("optPath.size() is %d \n", optPath.size());
+	printf("Size of path is %d \n", optPath.size());
 
-	printf("initial h_val is %lf\n", init_h);
+	// printf("initial h_val is %lf\n", init_h);
 	int pathSize = optPath.size();
 
 	///// Plotting ///////
@@ -267,23 +266,23 @@ int main(int argc, char* argv[]){
 		optPath.pop();
 	}
 
-	// std::vector<double> x_obstacle, y_obstacle;
-	// x_obstacle.push_back(0); y_obstacle.push_back(55);
-	// x_obstacle.push_back(50); y_obstacle.push_back(55);
-	// x_obstacle.push_back(50); y_obstacle.push_back(60);
-	// x_obstacle.push_back(0); y_obstacle.push_back(60);
+	std::vector<double> x_obstacle, y_obstacle;
+	x_obstacle.push_back(0); y_obstacle.push_back(55);
+	x_obstacle.push_back(60); y_obstacle.push_back(55);
+	x_obstacle.push_back(60); y_obstacle.push_back(62);
+	x_obstacle.push_back(0); y_obstacle.push_back(62);
 
-	// std::vector<double> x_obstacle1, y_obstacle1;
-	// x_obstacle1.push_back(100); y_obstacle1.push_back(35);
-	// x_obstacle1.push_back(50); y_obstacle1.push_back(35);
-	// x_obstacle1.push_back(50); y_obstacle1.push_back(40);
-	// x_obstacle1.push_back(100); y_obstacle1.push_back(40);
+	std::vector<double> x_obstacle1, y_obstacle1;
+	x_obstacle1.push_back(100); y_obstacle1.push_back(35);
+	x_obstacle1.push_back(30); y_obstacle1.push_back(35);
+	x_obstacle1.push_back(30); y_obstacle1.push_back(42);
+	x_obstacle1.push_back(100); y_obstacle1.push_back(42);
 
 	// Set the size of output image to 1200x780 pixels
     plt::figure_size(1200, 780);
 
-    // plt::plot(x_obstacle, y_obstacle,"r");
-    // plt::plot(x_obstacle1, y_obstacle1,"r");
+    plt::plot(x_obstacle, y_obstacle,"r");
+    plt::plot(x_obstacle1, y_obstacle1,"r");
 
     std::map<std::string, std::string> keywords;
     // keywords["scale"]=1;
@@ -291,7 +290,7 @@ int main(int argc, char* argv[]){
     plt::title("Car navigating a dummy parking-lot (top-view)");
     // plt::plot(x,y);
 
-    plt::xlim(0, 1000);
+    plt::xlim(0, 100);
 
     plt::show();
 }

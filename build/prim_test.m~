@@ -1,6 +1,6 @@
-resolution=0.1;
+resolution=0.01;
 num_angles=16;
-Rmin = 4.0;
+Rmin=.0;
 
 forward_cost = 1;
 backward_cost = 5;
@@ -25,7 +25,7 @@ costs = zeros(ntraj,1);
 x0=10;
 
 %R1
-x1=10;
+x1=19;
 y1=4;
 
 %R2
