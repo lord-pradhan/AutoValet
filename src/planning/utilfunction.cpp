@@ -23,10 +23,10 @@ bool freeState( CoordDisc coordsIn ){
 
         return false;
     }
-    else if(x<40 && y<62 && y>55 ){
+    else if(x<60 && y<62 && y>55 ){
         return false;
     }
-    else if( x>50 && y<42 && y>35 ){
+    else if( x>30 && y<42 && y>35 ){
         return false;
     }
 

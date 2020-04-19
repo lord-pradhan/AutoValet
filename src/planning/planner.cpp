@@ -5,7 +5,6 @@
  *=================================================================*/
 #include <iostream>
 #include <math.h>
-// #include <mex.h>
 #include <array>
 #include <queue>
 #include <vector>
@@ -19,11 +18,11 @@
 #include "params.h"
 using namespace std::chrono;
 using namespace std;
-// #include "./matplotlib-cpp/matplotlibcpp.h"
+#include "./matplotlib-cpp/matplotlibcpp.h"
 #include <cmath>
 #include "dubins.h"
 
-// namespace plt = matplotlibcpp;
+namespace plt = matplotlibcpp;
 
 
 #define  NORMALIZEDISCTHETA(THETA, THETADIRS) (((THETA>=0)?((THETA)%(THETADIRS)):(((THETA)%(THETADIRS)+THETADIRS)%THETADIRS)))
@@ -249,8 +248,6 @@ int main(int argc, char* argv[]){
 	printf("Time taken for computation is %d milliseconds\n", duration.count());
 
 	printf("Size of path is %d \n", optPath.size());
-	printf("Plotting doesn't work without python, not possible to plot in alpha 
-		version until migration to ROS is complete\n");
 
 	// printf("initial h_val is %lf\n", init_h);
 	int pathSize = optPath.size();
@@ -269,31 +266,31 @@ int main(int argc, char* argv[]){
 		optPath.pop();
 	}
 
-	// std::vector<double> x_obstacle, y_obstacle;
-	// x_obstacle.push_back(0); y_obstacle.push_back(55);
-	// x_obstacle.push_back(50); y_obstacle.push_back(55);
-	// x_obstacle.push_back(50); y_obstacle.push_back(60);
-	// x_obstacle.push_back(0); y_obstacle.push_back(60);
+	std::vector<double> x_obstacle, y_obstacle;
+	x_obstacle.push_back(0); y_obstacle.push_back(55);
+	x_obstacle.push_back(60); y_obstacle.push_back(55);
+	x_obstacle.push_back(60); y_obstacle.push_back(62);
+	x_obstacle.push_back(0); y_obstacle.push_back(62);
 
-	// std::vector<double> x_obstacle1, y_obstacle1;
-	// x_obstacle1.push_back(100); y_obstacle1.push_back(35);
-	// x_obstacle1.push_back(50); y_obstacle1.push_back(35);
-	// x_obstacle1.push_back(50); y_obstacle1.push_back(40);
-	// x_obstacle1.push_back(100); y_obstacle1.push_back(40);
+	std::vector<double> x_obstacle1, y_obstacle1;
+	x_obstacle1.push_back(100); y_obstacle1.push_back(35);
+	x_obstacle1.push_back(30); y_obstacle1.push_back(35);
+	x_obstacle1.push_back(30); y_obstacle1.push_back(42);
+	x_obstacle1.push_back(100); y_obstacle1.push_back(42);
 
 	// Set the size of output image to 1200x780 pixels
-    // plt::figure_size(1200, 780);
+    plt::figure_size(1200, 780);
 
-    // // plt::plot(x_obstacle, y_obstacle,"r");
-    // // plt::plot(x_obstacle1, y_obstacle1,"r");
+    plt::plot(x_obstacle, y_obstacle,"r");
+    plt::plot(x_obstacle1, y_obstacle1,"r");
 
-    // std::map<std::string, std::string> keywords;
-    // // keywords["scale"]=1;
-    // plt::quiver(x, y, u, v);//, 'width', 0.05, 'length', 0.1);
-    // plt::title("Car navigating a dummy parking-lot (top-view)");
-    // // plt::plot(x,y);
+    std::map<std::string, std::string> keywords;
+    // keywords["scale"]=1;
+    plt::quiver(x, y, u, v);//, 'width', 0.05, 'length', 0.1);
+    plt::title("Car navigating a dummy parking-lot (top-view)");
+    // plt::plot(x,y);
 
-    // plt::xlim(0, 1000);
+    plt::xlim(0, 100);
 
-    // plt::show();
+    plt::show();
 }
