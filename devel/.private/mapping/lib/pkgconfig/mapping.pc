@@ -1,0 +1,8 @@
+prefix=/home/lord-pradhan/auto_valet/devel/.private/mapping
+
+Name: mapping
+Description: Description of mapping
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/lord-pradhan/auto_valet/install
+
+Name: teleop_twist_keyboard
+Description: Description of teleop_twist_keyboard
+Version: 0.6.2
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
