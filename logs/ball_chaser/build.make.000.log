@@ -1,31 +1,31 @@
 [35m[1mScanning dependencies of target _ball_chaser_generate_messages_check_deps_DriveToTarget[0m
-[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
 [35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
-[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[  0%] Built target _ball_chaser_generate_messages_check_deps_DriveToTarget
+[  0%] Built target std_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
 [35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
 [35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
-[  0%] Built target std_msgs_generate_messages_cpp
-[  0%] Built target std_msgs_generate_messages_eus
-[  0%] Built target std_msgs_generate_messages_nodejs
-[  0%] Built target std_msgs_generate_messages_lisp
 [  0%] Built target std_msgs_generate_messages_py
-[  0%] Built target _ball_chaser_generate_messages_check_deps_DriveToTarget
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[  0%] Built target std_msgs_generate_messages_cpp
 [35m[1mScanning dependencies of target ball_chaser_generate_messages_eus[0m
-[35m[1mScanning dependencies of target ball_chaser_generate_messages_lisp[0m
+[  9%] [34m[1mGenerating EusLisp code from ball_chaser/DriveToTarget.srv[0m
 [35m[1mScanning dependencies of target ball_chaser_generate_messages_nodejs[0m
+[ 18%] [34m[1mGenerating Javascript code from ball_chaser/DriveToTarget.srv[0m
 [35m[1mScanning dependencies of target ball_chaser_generate_messages_py[0m
-[35m[1mScanning dependencies of target ball_chaser_generate_messages_cpp[0m
-[ 18%] [34m[1mGenerating Lisp code from ball_chaser/DriveToTarget.srv[0m
-[ 18%] [34m[1mGenerating EusLisp code from ball_chaser/DriveToTarget.srv[0m
-[ 27%] [34m[1mGenerating Javascript code from ball_chaser/DriveToTarget.srv[0m
+[ 27%] [34m[1mGenerating Python code from SRV ball_chaser/DriveToTarget[0m
 [ 36%] [34m[1mGenerating EusLisp manifest code for ball_chaser[0m
-[ 54%] [34m[1mGenerating C++ code from ball_chaser/DriveToTarget.srv[0m
-[ 54%] [34m[1mGenerating Python code from SRV ball_chaser/DriveToTarget[0m
+[ 36%] Built target ball_chaser_generate_messages_nodejs
+[ 45%] [34m[1mGenerating Python srv __init__.py for ball_chaser[0m
+[35m[1mScanning dependencies of target ball_chaser_generate_messages_lisp[0m
+[ 54%] [34m[1mGenerating Lisp code from ball_chaser/DriveToTarget.srv[0m
+[ 54%] Built target ball_chaser_generate_messages_py
 [ 54%] Built target ball_chaser_generate_messages_lisp
-[ 54%] Built target ball_chaser_generate_messages_nodejs
-[ 63%] [34m[1mGenerating Python srv __init__.py for ball_chaser[0m
+[35m[1mScanning dependencies of target ball_chaser_generate_messages_cpp[0m
+[ 63%] [34m[1mGenerating C++ code from ball_chaser/DriveToTarget.srv[0m
 [ 63%] Built target ball_chaser_generate_messages_cpp
-[ 63%] Built target ball_chaser_generate_messages_py
 [35m[1mScanning dependencies of target drive_bot[0m
 [35m[1mScanning dependencies of target process_image[0m
 [ 72%] [32mBuilding CXX object CMakeFiles/drive_bot.dir/src/drive_bot.cpp.o[0m

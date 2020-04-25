@@ -1,22 +1,22 @@
 Determining if the pthread_create exist failed with the following output:
 Change Dir: /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_35db3/fast"
-/usr/bin/make -f CMakeFiles/cmTC_35db3.dir/build.make CMakeFiles/cmTC_35db3.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_027f8/fast"
+/usr/bin/make -f CMakeFiles/cmTC_027f8.dir/build.make CMakeFiles/cmTC_027f8.dir/build
 make[1]: Entering directory '/home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_35db3.dir/CheckSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_35db3.dir/CheckSymbolExists.c.o   -c /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_35db3
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_35db3.dir/link.txt --verbose=1
-/usr/bin/cc      -rdynamic CMakeFiles/cmTC_35db3.dir/CheckSymbolExists.c.o  -o cmTC_35db3 
-CMakeFiles/cmTC_35db3.dir/CheckSymbolExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_027f8.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_027f8.dir/CheckSymbolExists.c.o   -c /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_027f8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_027f8.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_027f8.dir/CheckSymbolExists.c.o  -o cmTC_027f8 
+CMakeFiles/cmTC_027f8.dir/CheckSymbolExists.c.o: In function `main':
 CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_35db3.dir/build.make:97: recipe for target 'cmTC_35db3' failed
-make[1]: *** [cmTC_35db3] Error 1
+CMakeFiles/cmTC_027f8.dir/build.make:97: recipe for target 'cmTC_027f8' failed
+make[1]: *** [cmTC_027f8] Error 1
 make[1]: Leaving directory '/home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_35db3/fast' failed
-make: *** [cmTC_35db3/fast] Error 2
+Makefile:126: recipe for target 'cmTC_027f8/fast' failed
+make: *** [cmTC_027f8/fast] Error 2
 
 File /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
@@ -36,20 +36,20 @@ int main(int argc, char** argv)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_7bed8/fast"
-/usr/bin/make -f CMakeFiles/cmTC_7bed8.dir/build.make CMakeFiles/cmTC_7bed8.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_d0316/fast"
+/usr/bin/make -f CMakeFiles/cmTC_d0316.dir/build.make CMakeFiles/cmTC_d0316.dir/build
 make[1]: Entering directory '/home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_7bed8.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_7bed8.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_7bed8
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7bed8.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_7bed8.dir/CheckFunctionExists.c.o  -o cmTC_7bed8 -lpthreads 
+Building C object CMakeFiles/cmTC_d0316.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_d0316.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_d0316
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d0316.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_d0316.dir/CheckFunctionExists.c.o  -o cmTC_d0316 -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_7bed8.dir/build.make:97: recipe for target 'cmTC_7bed8' failed
-make[1]: *** [cmTC_7bed8] Error 1
+CMakeFiles/cmTC_d0316.dir/build.make:97: recipe for target 'cmTC_d0316' failed
+make[1]: *** [cmTC_d0316] Error 1
 make[1]: Leaving directory '/home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_7bed8/fast' failed
-make: *** [cmTC_7bed8/fast] Error 2
+Makefile:126: recipe for target 'cmTC_d0316/fast' failed
+make: *** [cmTC_d0316/fast] Error 2
 
 

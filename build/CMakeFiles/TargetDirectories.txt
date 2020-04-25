@@ -1,3 +1,0 @@
-/home/lord-pradhan/catkin_ws/src/auto_valet/build/CMakeFiles/rebuild_cache.dir
-/home/lord-pradhan/catkin_ws/src/auto_valet/build/CMakeFiles/run_planner.dir
-/home/lord-pradhan/catkin_ws/src/auto_valet/build/CMakeFiles/edit_cache.dir

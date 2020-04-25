@@ -1,3 +1,3 @@
-Symlinking /home/lord-pradhan/auto_valet/devel/share/my_robot/cmake/my_robotConfig.cmake
-Symlinking /home/lord-pradhan/auto_valet/devel/share/my_robot/cmake/my_robotConfig-version.cmake
-Symlinking /home/lord-pradhan/auto_valet/devel/lib/pkgconfig/my_robot.pc
+Linked: (/home/lord-pradhan/auto_valet/devel/.private/my_robot/share/my_robot/cmake/my_robotConfig.cmake, /home/lord-pradhan/auto_valet/devel/share/my_robot/cmake/my_robotConfig.cmake)
+Linked: (/home/lord-pradhan/auto_valet/devel/.private/my_robot/share/my_robot/cmake/my_robotConfig-version.cmake, /home/lord-pradhan/auto_valet/devel/share/my_robot/cmake/my_robotConfig-version.cmake)
+Linked: (/home/lord-pradhan/auto_valet/devel/.private/my_robot/lib/pkgconfig/my_robot.pc, /home/lord-pradhan/auto_valet/devel/lib/pkgconfig/my_robot.pc)
