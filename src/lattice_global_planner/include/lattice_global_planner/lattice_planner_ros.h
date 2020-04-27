@@ -28,17 +28,6 @@ public:
 	bool makePlan(const geometry_msgs::PoseStamped& start,
 	            const geometry_msgs::PoseStamped& goal,
 	            std::vector<geometry_msgs::PoseStamped>& plan);
-
-
-protected:
-    /**
-     * @brief Store a copy of the current costmap in \a costmap.  Called by makePlan.
-     */
-    costmap_2d::Costmap2D* costmap_;
-    std::string frame_id_;
-    ros::Publisher plan_pub_;
-    bool initialized_, allow_unknown_;
-
 };
 
 };
