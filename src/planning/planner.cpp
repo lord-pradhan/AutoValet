@@ -66,7 +66,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 
     int dX[numOfDirs] = { -1, -1, -1,  0,  0,  1, 1, 1};
     int dY[numOfDirs] = { -1,  0,  1, -1,  1, -1, 0, 1}; 
-    double cost[numOfDirs] = {1.4, 1, 1.4, 1, 1, 1.4, 1, 1};
+    double cost[numOfDirs] = {1.4, 1, 1.4, 1, 1, 1.4, 1, 1.4};
 
 	std::vector<State> fullGraph;
 
@@ -153,13 +153,13 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 				tempPose.x = temp.getCoords().x + i.endPose.x;
 				tempPose.y = temp.getCoords().y + i.endPose.y;
 				tempPose.theta = i.endPose.theta;
-				// printf("tempPose is %d %d %d\n", tempPose.x, tempPose.y, tempPose.theta);
+				printf("tempPose is %d %d %d\n", tempPose.x, tempPose.y, tempPose.theta);
 
 				if( freeState(tempPose) && (closed_set.find(GetIndex(tempPose))==closed_set.end()) ){
 
 					State newState(tempPose);
 					newState.setH(coordsGoalDisc, gridmap_pre[tempPose.y][tempPose.x].G_val);
-					// std::cout<<"H-value for inserted state is "<< newState.getH() << std::endl;
+					std::cout<<"H-value for inserted state is "<< newState.getH() << std::endl;
 					newState.setID(elemCt);
 
 					GraphEdge exToNew, newToEx;
@@ -177,7 +177,7 @@ static std::stack<State> planner(const Coord& coordsinit, const Coord& goalCoord
 					elemCt++;
 
 					fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost );
-					// std::cout<<"G-value for inserted state is "<< fullGraph[elemCt-1].getG() << std::endl;
+					std::cout<<"G-value for inserted state is "<< fullGraph[elemCt-1].getG() << std::endl;
 					open_set.push(fullGraph[elemCt-1]);					
 				}
 			}			
