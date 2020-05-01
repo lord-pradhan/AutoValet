@@ -1,14 +1,14 @@
-[  0%] Built target std_msgs_generate_messages_eus
 [  0%] Built target _ball_chaser_generate_messages_check_deps_DriveToTarget
+[  0%] Built target std_msgs_generate_messages_eus
 [  0%] Built target std_msgs_generate_messages_nodejs
 [  0%] Built target std_msgs_generate_messages_py
 [  0%] Built target std_msgs_generate_messages_lisp
 [  0%] Built target std_msgs_generate_messages_cpp
 [ 18%] Built target ball_chaser_generate_messages_eus
 [ 27%] Built target ball_chaser_generate_messages_nodejs
-[ 36%] Built target ball_chaser_generate_messages_lisp
-[ 54%] Built target ball_chaser_generate_messages_py
+[ 45%] Built target ball_chaser_generate_messages_py
+[ 54%] Built target ball_chaser_generate_messages_lisp
 [ 63%] Built target ball_chaser_generate_messages_cpp
 [ 63%] Built target ball_chaser_generate_messages
-[ 81%] Built target drive_bot
-[100%] Built target process_image
+[ 81%] Built target process_image
+[100%] Built target drive_bot

@@ -24,8 +24,8 @@ LatticePlannerROS::LatticePlannerROS(std::string name, costmap_2d::Costmap2DROS*
 // useful functions related to costmap
 bool LatticePlannerROS::world2Cont(float x_world, float y_world, float& x_cont, float& y_cont)
 {
-    if(x_world > originX || x_world < resolution*width + originX ||
-        y_world > originY || y_world < resolution*height + originY ){
+    if(x_world >= originX || x_world <= resolution*width + originX ||
+        y_world >= originY || y_world <= resolution*height + originY ){
 
         x_cont = x_world - originX;
         y_cont = y_world - originY;
@@ -237,7 +237,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         for(int dir =0; dir<numOfDirs; dir++){
 
             int newx_disc = x_temp_disc + dX[dir], newy_disc = y_temp_disc + dY[dir];
-            CoordDisc coordsNewTemp(newx_disc, newy_disc, 0);
+            // CoordDisc coordsNewTemp(newx_disc, newy_disc, 0);
             double newx_cont = DiscXY2Cont(newx_disc, graph_dx);
             double newy_cont = DiscXY2Cont(newy_disc, graph_dy);
 
@@ -249,15 +249,23 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
             unsigned int x_new_cmap, y_new_cmap; // costmap frame
 
-            if( costmap_->worldToMap(newx_world, newy_world, x_new_cmap, y_new_cmap) && (gridmap_pre[newy_disc][newx_disc].expanded==false) ){ 
+            if( costmap_->worldToMap(newx_world, newy_world, x_new_cmap, y_new_cmap) && 
+                (gridmap_pre[newy_disc][newx_disc].expanded==false) ){ 
 
                 if( (double) (costmap_->getCost(x_new_cmap, y_new_cmap)) < collision_thresh &&
                     gridmap_pre[newy_disc][newx_disc].G_val > G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap)) ){
-
+                    
                     gridmap_pre[newy_disc][newx_disc].G_val = G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap));
                     open_set_pre.push(gridmap_pre[newy_disc][newx_disc]);
-                    // ROS_INFO("pushed H-val during Dijkstra is %lf", gridmap_pre[newy][newx].G_val);
+                    // ROS_INFO("pushed H-val during Dijkstra is %lf", gridmap_pre[newy_disc][newx_disc].G_val);
                 }
+                else if((double) (costmap_->getCost(x_new_cmap, y_new_cmap)) > collision_thresh) {
+                    // ROS_INFO("Encountered obstacle");
+                    // printf("cost of new cell is %lf\n", (double) costmap_->getCost(x_new_cmap, y_new_cmap) );
+                }
+            }
+            else{
+                // ROS_INFO("Out-of-map position or previously expanded state reached");
             }
         }
     }
@@ -303,13 +311,13 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
                 tempPose.x = temp.getCoords().x + i.endPose.x;
                 tempPose.y = temp.getCoords().y + i.endPose.y;
                 tempPose.theta = i.endPose.theta;
-                ROS_INFO("tempPose in disc frame is %d %d %d", tempPose.x, tempPose.y, tempPose.theta);
+                // ROS_INFO("tempPose in disc frame is %d %d %d", tempPose.x, tempPose.y, tempPose.theta);
                 
                 double newx_cont = DiscXY2Cont(tempPose.x, graph_dx);
                 double newy_cont = DiscXY2Cont(tempPose.y, graph_dy);
 
-                ROS_INFO("newx_cont is %lf", newx_cont);
-                ROS_INFO("newy_cont is %lf", newy_cont);
+                // ROS_INFO("newx_cont is %lf", newx_cont);
+                // ROS_INFO("newy_cont is %lf", newy_cont);
 
                 float newx_world, newy_world;
                 cont2World(newx_cont, newy_cont, newx_world, newy_world);
@@ -325,7 +333,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
                         State newState(tempPose);
                         newState.setH(coordsGoalDisc, gridmap_pre[tempPose.y][tempPose.x].G_val);
-                        ROS_INFO_STREAM("H-value for inserted state is "<< newState.getH() );
+                        // ROS_INFO_STREAM("H-value for inserted state is "<< newState.getH() );
                         newState.setID(elemCt);
 
                         GraphEdge exToNew, newToEx;
@@ -345,9 +353,15 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
                         fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost + 
                                                     (double) costmap_->getCost(new_x_cmap, new_y_cmap) );
-                        ROS_INFO_STREAM("G-value for inserted state is "<< fullGraph[elemCt-1].getG() );
+                        // ROS_INFO_STREAM("G-value for inserted state is "<< fullGraph[elemCt-1].getG() );
                         open_set.push(fullGraph[elemCt-1]);                 
                     }
+                    else{
+                        // ROS_INFO("Obstacle or previously expanded state reached");
+                    }
+                }
+                else{
+                    // ROS_INFO("Out of map position reached");
                 }
             }           
         }
