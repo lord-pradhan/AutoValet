@@ -36,16 +36,6 @@ public:
 	// void snapToGrid();
 };
 
-
-// class Control{
-
-// public:
-// 	Control(double vel_, double curv_): vel(vel_), curv(curv_){}
-
-// 	double vel, curv;
-// };
-
-
 //// graph edge ////
 class GraphEdge{
 
@@ -146,10 +136,6 @@ public:
 
 
 //// useful functions //////
-// std::vector<Primitive> getNextStates( Coord coordsIn  );
-
-// Coord motionRollout( Coord coordsIn, Control controlIn, double time_ahead );
-
 bool freeState( CoordDisc coordsIn );
 
 bool goalRegion(const Coord& ego, const Coord &goal);

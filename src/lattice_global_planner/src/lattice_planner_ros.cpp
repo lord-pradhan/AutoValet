@@ -21,6 +21,30 @@ LatticePlannerROS::LatticePlannerROS(std::string name, costmap_2d::Costmap2DROS*
 }
 
 
+// useful functions related to costmap
+bool LatticePlannerROS::world2Cont(float x_world, float y_world, float& x_cont, float& y_cont)
+{
+    if(x_world > originX || x_world < resolution*width + originX ||
+        y_world > originY || y_world < resolution*height + originY ){
+
+        x_cont = x_world - originX;
+        y_cont = y_world - originY;
+        return true;    
+    }
+    else{
+        ROS_ERROR("out of map position chosen");
+        return false;
+    }
+    
+}
+
+void LatticePlannerROS::cont2World(float x_cont, float y_cont, float& x_world, float& y_world)
+{
+    x_world = x_cont + originX;
+    y_world = y_cont + originY;
+}
+
+
 void LatticePlannerROS::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros){
 
     initialize(name, costmap_ros->getCostmap(), costmap_ros->getGlobalFrameID());
@@ -33,6 +57,40 @@ void LatticePlannerROS::initialize(std::string name, costmap_2d::Costmap2D* cost
         costmap_ = costmap;
         frame_id_ = frame_id;
         initialized_ = true;
+
+        // costmap_ros_ = costmap_ros;
+        // costmap_ = costmap_ros_->getCostmap();
+
+        // ros::NodeHandle private_nh("~/" + name);
+
+        originX = costmap_->getOriginX();
+        originY = costmap_->getOriginY();
+
+        width = costmap_->getSizeInCellsX();
+        height = costmap_->getSizeInCellsY();
+        resolution = costmap_->getResolution();
+        // mapSize = width*height;
+        // tBreak = 1+1/(mapSize); 
+        // value =0;
+
+        // read in motion primitives file
+        ROS_INFO("Reading in motion primitives\n");
+        const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";    
+
+        if (sMotPrimFile != NULL) {
+            FILE* fMotPrim = fopen(sMotPrimFile, "r");
+            if (fMotPrim == NULL) {
+                std::stringstream ss;
+                ss << "ERROR: unable to open " << sMotPrimFile;
+                ROS_INFO("unable to open \n"); 
+            }
+
+            if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
+                ROS_INFO("ERROR: failed to read in motion primitive file\n");
+                // return;
+            }
+            fclose(fMotPrim);
+        }
 
     } 
     else
@@ -67,6 +125,9 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         return false;
     }
 
+    ROS_DEBUG("Got a start: %.2f, %.2f, and a goal: %.2f, %.2f", start.pose.position.x, start.pose.position.y,
+        goal.pose.position.x, goal.pose.position.y);
+
     //clear the plan, just in case
     plan.clear();
 
@@ -75,17 +136,18 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
     //until tf can handle transforming things that are way in the past... we'll require the goal to be in our global frame
     if (goal.header.frame_id != global_frame) {
-        ROS_INFO("The goal pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", global_frame.c_str(), goal.header.frame_id.c_str() );
+        ROS_ERROR("The goal pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", global_frame.c_str(), goal.header.frame_id.c_str() );
         return false;
     }
 
     if (start.header.frame_id != global_frame) {
-        ROS_INFO("start pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", global_frame.c_str(), start.header.frame_id.c_str());
+        ROS_ERROR("start pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", global_frame.c_str(), start.header.frame_id.c_str());
         return false;
     }
 
-    // fill out start and goal coords
+    // fill out start and goal coords in continuous frame
     Coord coordsinit, goalCoord;
+    float x_start_cont, y_start_cont, x_goal_cont, y_goal_cont;
 
     // get orientation
     tf::Quaternion q1(
@@ -97,7 +159,9 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     double roll, pitch, yaw;
     m1.getRPY(roll, pitch, yaw);
 
-    coordsinit.x = start.pose.position.x; coordsinit.y = start.pose.position.y; coordsinit.theta = yaw;
+    float x_start_world = start.pose.position.x, y_start_world = start.pose.position.y;
+    bool pick1 = world2Cont(x_start_world, y_start_world, x_start_cont, y_start_cont);
+    coordsinit.x = x_start_cont; coordsinit.y = y_start_cont; coordsinit.theta = yaw;    
 
     // get orientation
     tf::Quaternion q2(
@@ -108,39 +172,27 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     tf::Matrix3x3 m2(q2);
     m2.getRPY(roll, pitch, yaw);    
 
-    goalCoord.x = goal.pose.position.x; goalCoord.y = goal.pose.position.y; goalCoord.theta = yaw;
+    float x_goal_world = goal.pose.position.x, y_goal_world = goal.pose.position.y;
+    bool pick2 = world2Cont(x_goal_world, y_goal_world, x_goal_cont, y_goal_cont);
+    goalCoord.x = x_goal_world; goalCoord.y = y_goal_world; goalCoord.theta = yaw;
+
+    if(!pick1 || !pick2){
+        return false;
+    }
 
     //shift to discrete
     const CoordDisc coordsInitDisc( ContXY2Disc(coordsinit.x, graph_dx), ContXY2Disc(coordsinit.y, graph_dy),
         ContTheta2Disc(coordsinit.theta, numAngles) );
     const CoordDisc coordsGoalDisc( ContXY2Disc(goalCoord.x, graph_dx), ContXY2Disc(goalCoord.y, graph_dy),
         ContTheta2Disc(goalCoord.theta, numAngles) );
-
-    // read in motion primitives file
-    const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";
-    MPrimFile readFile;
-
-    if (sMotPrimFile != NULL) {
-        FILE* fMotPrim = fopen(sMotPrimFile, "r");
-        if (fMotPrim == NULL) {
-            std::stringstream ss;
-            ss << "ERROR: unable to open " << sMotPrimFile;
-            ROS_INFO("unable to open \n"); 
-        }
-
-        if (ReadMotionPrimitives(fMotPrim, readFile) == false) {
-            ROS_INFO("ERROR: failed to read in motion primitive file\n");
-            // return;
-        }
-        fclose(fMotPrim);
-    }
+    
 
     auto start1 = high_resolution_clock::now();
 
     //initialise vars
     int elemCt = 0;
-    int x_size = costmap_->getSizeInCellsX();//(int) x_ul/graph_dx +1;
-    int y_size = costmap_->getSizeInCellsY();//(int) y_ul/graph_dy +1;
+    int x_size = width;//(int) x_ul/graph_dx +1;
+    int y_size = height;//(int) y_ul/graph_dy +1;
 
     int dX[numOfDirs] = { -1, -1, -1,  0,  0,  1, 1, 1};
     int dY[numOfDirs] = { -1,  0,  1, -1,  1, -1, 0, 1}; 
@@ -156,7 +208,8 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     for (int i =0; i<y_size; i++){
         for (int j=0; j<x_size; j++){
 
-            gridmap_pre[i][j].coords.x = j;
+            // these coords are in discrete frame
+            gridmap_pre[i][j].coords.x = j; 
             gridmap_pre[i][j].coords.y = i;
         }
     }
@@ -167,31 +220,43 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     std::priority_queue< State_pre, std::vector<State_pre>, CompareF_pre > open_set_pre;
     open_set_pre.push(gridmap_pre[coordsGoalDisc.y][coordsGoalDisc.x]);
 
+    ROS_INFO("Before entering Dijkstra expansion while loop");
+
     while( !open_set_pre.empty() ){
 
         State_pre temp_pre = open_set_pre.top();
-        int x_temp = temp_pre.coords.x, y_temp = temp_pre.coords.y;
+
+        // these are in discrete
+        int x_temp_disc = temp_pre.coords.x, y_temp_disc = temp_pre.coords.y;
         double G_temp = temp_pre.G_val;
-        gridmap_pre[y_temp][x_temp].expanded = true;
+        gridmap_pre[y_temp_disc][x_temp_disc].expanded = true;
 
         open_set_pre.pop();
         // lookUpHEnv[GetIndex(coordTemp)] = temp_pre.G_val;
 
         for(int dir =0; dir<numOfDirs; dir++){
 
-            int newx = x_temp + dX[dir], newy = y_temp + dY[dir];
-            CoordDisc coordsNewTemp(newx, newy, 0);
-            double newx_cont = DiscXY2Cont(newx, graph_dx);
-            double newy_cont = DiscXY2Cont(newy, graph_dy);
+            int newx_disc = x_temp_disc + dX[dir], newy_disc = y_temp_disc + dY[dir];
+            CoordDisc coordsNewTemp(newx_disc, newy_disc, 0);
+            double newx_cont = DiscXY2Cont(newx_disc, graph_dx);
+            double newy_cont = DiscXY2Cont(newy_disc, graph_dy);
 
-            unsigned int mx_new, my_new;
-            if( costmap_->worldToMap(newx_cont, newy_cont, mx_new, my_new) && (gridmap_pre[newy][newx].expanded==false) ){ 
+            // ROS_INFO("newx_cont is %lf", newx_cont);
+            // ROS_INFO("newy_cont is %lf", newy_cont);
 
-                if( costmap_->worldToMap(newx_cont, newy_cont, mx_new, my_new) < collision_thresh &&
-                    gridmap_pre[newy][newx].G_val > G_temp + cost[dir] + (double)(costmap_->getCost(mx_new, my_new)) ){
+            float newx_world, newy_world;
+            cont2World(newx_cont, newy_cont, newx_world, newy_world);
 
-                    gridmap_pre[newy][newx].G_val = G_temp + cost[dir] + (double)(costmap_->getCost(mx_new, my_new));
-                    open_set_pre.push(gridmap_pre[newy][newx]);
+            unsigned int x_new_cmap, y_new_cmap; // costmap frame
+
+            if( costmap_->worldToMap(newx_world, newy_world, x_new_cmap, y_new_cmap) && (gridmap_pre[newy_disc][newx_disc].expanded==false) ){ 
+
+                if( (double) (costmap_->getCost(x_new_cmap, y_new_cmap)) < collision_thresh &&
+                    gridmap_pre[newy_disc][newx_disc].G_val > G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap)) ){
+
+                    gridmap_pre[newy_disc][newx_disc].G_val = G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap));
+                    open_set_pre.push(gridmap_pre[newy_disc][newx_disc]);
+                    // ROS_INFO("pushed H-val during Dijkstra is %lf", gridmap_pre[newy][newx].G_val);
                 }
             }
         }
@@ -222,6 +287,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
     while( !open_set.empty() && !( open_set.top().getCoords() == coordsGoalDisc ) ){
 
+        // all in discrete frame
         // generate primitives
         State temp = open_set.top();
         int tempID = open_set.top().getID();
@@ -237,18 +303,25 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
                 tempPose.x = temp.getCoords().x + i.endPose.x;
                 tempPose.y = temp.getCoords().y + i.endPose.y;
                 tempPose.theta = i.endPose.theta;
-                ROS_INFO("tempPose is %d %d %d", tempPose.x, tempPose.y, tempPose.theta);
-
-                unsigned int new_mx, new_my;
+                ROS_INFO("tempPose in disc frame is %d %d %d", tempPose.x, tempPose.y, tempPose.theta);
+                
                 double newx_cont = DiscXY2Cont(tempPose.x, graph_dx);
                 double newy_cont = DiscXY2Cont(tempPose.y, graph_dy);
 
-                bool free = costmap_->worldToMap(newx_cont, newy_cont, new_mx, new_my);
+                ROS_INFO("newx_cont is %lf", newx_cont);
+                ROS_INFO("newy_cont is %lf", newy_cont);
+
+                float newx_world, newy_world;
+                cont2World(newx_cont, newy_cont, newx_world, newy_world);
+
+                unsigned int new_x_cmap, new_y_cmap;
+
+                bool free = costmap_->worldToMap(newx_world, newy_world, new_x_cmap, new_y_cmap);
 
                 if(free){
 
-                    if( (double) costmap_->getCost(new_mx, new_my) < collision_thresh &&
-                    (closed_set.find(GetIndex(tempPose))==closed_set.end()) ){
+                    if( (double) costmap_->getCost(new_x_cmap, new_y_cmap) < collision_thresh &&
+                        (closed_set.find(GetIndex(tempPose))==closed_set.end()) ){
 
                         State newState(tempPose);
                         newState.setH(coordsGoalDisc, gridmap_pre[tempPose.y][tempPose.x].G_val);
@@ -266,10 +339,12 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
                         exToNew.cost= i.cost;
                         fullGraph[tempID].addAdjElem(exToNew);
 
+
                         fullGraph.push_back(newState);
                         elemCt++;
 
-                        fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost + (double) costmap_->getCost(new_mx, new_my) );
+                        fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost + 
+                                                    (double) costmap_->getCost(new_x_cmap, new_y_cmap) );
                         ROS_INFO_STREAM("G-value for inserted state is "<< fullGraph[elemCt-1].getG() );
                         open_set.push(fullGraph[elemCt-1]);                 
                     }
@@ -318,9 +393,17 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
         auto tempState = optPath.top();
 
-        geometry_msgs::PoseStamped tempInsert = start;
-        tempInsert.pose.position.x = DiscXY2Cont(tempState.getCoords().x, graph_dx);
-        tempInsert.pose.position.y = DiscXY2Cont(tempState.getCoords().y, graph_dy);
+        geometry_msgs::PoseStamped tempInsert = start; // world frame
+
+        float x_insert_cont, y_insert_cont, x_insert_world, y_insert_world;
+
+        x_insert_cont = DiscXY2Cont(tempState.getCoords().x, graph_dx);
+        y_insert_cont = DiscXY2Cont(tempState.getCoords().y, graph_dy);
+
+        cont2World(x_insert_cont, y_insert_cont, x_insert_world, y_insert_world);
+
+        tempInsert.pose.position.x = x_insert_world;
+        tempInsert.pose.position.y = y_insert_world;
 
         tf2::Quaternion myQuaternion;
         myQuaternion.setRPY( 0, 0, DiscTheta2Cont(tempState.getCoords().theta, numAngles) );

@@ -66,6 +66,10 @@ public:
 	LatticePlannerROS();
 	LatticePlannerROS(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
 
+	// useful functions
+	bool world2Cont(float x_world, float y_world, float& x_cont, float& y_cont);
+
+	void cont2World(float x_cont, float y_cont, float& x_world, float& y_world);
 
 	/** overridden classes from interface nav_core::BaseGlobalPlanner **/
 	void initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
@@ -84,6 +88,11 @@ protected:
     std::string frame_id_;
     // ros::Publisher plan_pub_;
     bool initialized_;//, allow_unknown_;
+	float originX;
+	float originY;
+	float resolution;
+	int width, height;
+	MPrimFile readFile;
 
 };
 
