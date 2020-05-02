@@ -35,5 +35,9 @@
 
   <!-- Spawn Jackal -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-urdf -model jackal -param robot_description -x -10.0 -y -5.0 -z 0.25" />
+        args="-urdf -model jackal -param robot_description -x 0.0 -y 0.0 -z 0.25" />
+
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" /> 
+
+
 </launch>
