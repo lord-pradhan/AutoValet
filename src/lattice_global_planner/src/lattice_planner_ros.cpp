@@ -174,7 +174,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
     float x_goal_world = goal.pose.position.x, y_goal_world = goal.pose.position.y;
     bool pick2 = world2Cont(x_goal_world, y_goal_world, x_goal_cont, y_goal_cont);
-    goalCoord.x = x_goal_world; goalCoord.y = y_goal_world; goalCoord.theta = yaw;
+    goalCoord.x = x_goal_cont; goalCoord.y = y_goal_cont; goalCoord.theta = yaw;
 
     if(!pick1 || !pick2){
         return false;
