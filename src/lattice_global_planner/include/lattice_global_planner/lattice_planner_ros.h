@@ -93,6 +93,11 @@ protected:
 	float resolution;
 	int width, height;
 	MPrimFile readFile;
+	long long int functionCall;
+	CoordDisc coordsGoalDiscPrev;
+
+	std::vector<State> fullGraph;
+	std::vector< std::vector<State_pre> > gridmap_pre;
 
 };
 

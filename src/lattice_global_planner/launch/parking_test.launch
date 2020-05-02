@@ -17,21 +17,23 @@
 	<include file="$(find jackal_gazebo)/launch/parking_world.launch" />
 
 	<!--- Run Move Base -->
-	<!-- <include file="$(find jackal_navigation)/launch/include/move_base.launch" /> -->
+	<include file="$(find jackal_navigation)/launch/include/move_base.launch" />
 
 	
-	<!--  ************** Navigation ***************  -->
+	<!--  ************** Navigation ***************  
 	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
   	  	<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/costmap_common_params.yaml" command="load" ns="global_costmap" />
   	 	<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/costmap_common_params.yaml" command="load" ns="local_costmap" />
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/local_costmap_params.yaml" command="load" />
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/global_costmap_params.yaml" command="load" />
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
+  	-->
 
   		<!-- This is the actual planner -->
 		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
 
 		<!-- This is the planner I am testing -->
+		<!-- 
 		<param name="base_global_planner" value="lattice_planner/LatticePlannerROS" /> 
 
 		<param name="planner_frequency" value="0.5" />
@@ -41,9 +43,12 @@
 		<param name="controller_frequency" value="5.0" />
 		<param name="controller_patience" value="15.0" />
 
-                <param name="clearing_rotation_allowed" value="false" /> <!-- Our carlike robot is not able to rotate in place -->
+                <param name="clearing_rotation_allowed" value="false" /> 
 	</node>
 
+		-->
+
+	
 
 	<!--  ****** Maps *****  -->
 

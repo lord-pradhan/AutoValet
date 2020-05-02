@@ -26,10 +26,10 @@
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
 
   		<!-- This is the actual planner -->
-		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
 
 		<!-- This is the planner I am testing -->
-		<param name="base_global_planner" value="lattice_planner/LatticePlannerROS" /> 
+		<!-- <param name="base_global_planner" value="lattice_planner/LatticePlannerROS" /> -->
 
 		<param name="planner_frequency" value="0.5" />
 		<param name="planner_patience" value="5.0" />
