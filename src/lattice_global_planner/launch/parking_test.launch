@@ -7,7 +7,7 @@
   - amcl
   - rviz view
  -->
- 
+
 <launch>
 
         <!--  ************** Global Parameters ***************  -->
@@ -27,14 +27,6 @@
 
             <param name="frame_id" value="map"/>
 
-	</node>
-
-	<node pkg="amcl" type="amcl" name="amcl" output="screen">
-		<rosparam file="$(find teb_local_planner_tutorials)/cfg/amcl_params.yaml" command="load" />
-
-	        <param name="initial_pose_x"            value="20"/>
-		<param name="initial_pose_y"            value="20"/>
-		<param name="initial_pose_a"            value="0"/>
 	</node>
 
 
