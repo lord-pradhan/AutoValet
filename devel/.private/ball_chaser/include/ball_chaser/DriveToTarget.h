@@ -57,8 +57,8 @@ struct DataType< ::ball_chaser::DriveToTarget > {
 };
 
 
-// service_traits::MD5Sum< ::ball_chaser::DriveToTargetRequest> should match 
-// service_traits::MD5Sum< ::ball_chaser::DriveToTarget > 
+// service_traits::MD5Sum< ::ball_chaser::DriveToTargetRequest> should match
+// service_traits::MD5Sum< ::ball_chaser::DriveToTarget >
 template<>
 struct MD5Sum< ::ball_chaser::DriveToTargetRequest>
 {
@@ -72,8 +72,8 @@ struct MD5Sum< ::ball_chaser::DriveToTargetRequest>
   }
 };
 
-// service_traits::DataType< ::ball_chaser::DriveToTargetRequest> should match 
-// service_traits::DataType< ::ball_chaser::DriveToTarget > 
+// service_traits::DataType< ::ball_chaser::DriveToTargetRequest> should match
+// service_traits::DataType< ::ball_chaser::DriveToTarget >
 template<>
 struct DataType< ::ball_chaser::DriveToTargetRequest>
 {
@@ -87,8 +87,8 @@ struct DataType< ::ball_chaser::DriveToTargetRequest>
   }
 };
 
-// service_traits::MD5Sum< ::ball_chaser::DriveToTargetResponse> should match 
-// service_traits::MD5Sum< ::ball_chaser::DriveToTarget > 
+// service_traits::MD5Sum< ::ball_chaser::DriveToTargetResponse> should match
+// service_traits::MD5Sum< ::ball_chaser::DriveToTarget >
 template<>
 struct MD5Sum< ::ball_chaser::DriveToTargetResponse>
 {
@@ -102,8 +102,8 @@ struct MD5Sum< ::ball_chaser::DriveToTargetResponse>
   }
 };
 
-// service_traits::DataType< ::ball_chaser::DriveToTargetResponse> should match 
-// service_traits::DataType< ::ball_chaser::DriveToTarget > 
+// service_traits::DataType< ::ball_chaser::DriveToTargetResponse> should match
+// service_traits::DataType< ::ball_chaser::DriveToTarget >
 template<>
 struct DataType< ::ball_chaser::DriveToTargetResponse>
 {

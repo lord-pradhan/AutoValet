@@ -5,9 +5,14 @@
     <rosparam file="$(find jackal_navigation)/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find jackal_navigation)/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
     
-    <rosparam file="$(find jackal_navigation)/params/map_nav_params/local_costmap_params.yaml" command="load" />
-    <rosparam file="$(find jackal_navigation)/params/map_nav_params/global_costmap_params.yaml" command="load" />
+    <!-- <rosparam file="$(find jackal_navigation)/params/map_nav_params/local_costmap_params.yaml" command="load" /> -->
+    <!-- <rosparam file="$(find jackal_navigation)/params/map_nav_params/global_costmap_params.yaml" command="load" /> -->
     
+    <!-- 
+    <rosparam file="$(find jackal_navigation)/params/odom_nav_params/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find jackal_navigation)/params/odom_nav_params/local_costmap_params.yaml" command="load" /> 
+    -->
+
     <rosparam file="$(find jackal_navigation)/params/base_local_planner_params.yaml" command="load" />
 
     <rosparam file="$(find jackal_navigation)/params/move_base_params.yaml" command="load" />
@@ -16,7 +21,7 @@
     <!-- <param name="base_global_planner" type="string" value="navfn/NavfnROS" /> -->
 
     <!-- this is the planner I am testing -->
-    <param name="base_global_planner" value="lattice_planner/LatticePlannerROS" />
+    <param name="base_global_planner" type="string" value="lattice_planner/LatticePlannerROS" />
     <param name="planner_frequency" value="0.5" />
     <param name="planner_patience" value="5.0" />
 

@@ -36,7 +36,7 @@ Not searching for unused variables given on the command line.
 [36m--[0m Looking for pthread_create in pthread - found
 [36m--[0m Found Threads: TRUE
 [36m--[0m Using Python nosetests: /usr/bin/nosetests-2.7
-[36m--[0m catkin 0.7.20
+[36m--[0m catkin 0.7.23
 [36m--[0m BUILD_SHARED_LIBS is on
 [36m--[0m Configuring done
 [36m--[0m Generating done
