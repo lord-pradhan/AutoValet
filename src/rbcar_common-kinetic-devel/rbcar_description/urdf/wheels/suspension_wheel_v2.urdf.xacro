@@ -35,7 +35,7 @@
   <xacro:property name="wheel_joint_damping" value="0.2" />
   <xacro:property name="wheel_joint_friction" value="0.7" />
   
-  <xacro:property name="suspension_joint_damping" value="0.2" />
+  <xacro:property name="suspension_joint_damping" value="20" />
   <xacro:property name="suspension_joint_friction" value="0.7" />
   
 
@@ -51,8 +51,8 @@
 
   <!-- Servo_stall_torque of the direction axis in Nm. servo_no_load_speed is
        measured in rad/s. -->
-  <xacro:property name="servo_stall_torque" value="50"/>  <!-- check -->
-  <xacro:property name="servo_no_load_speed" value="25"/> <!-- check -->
+  <xacro:property name="servo_stall_torque" value="500"/>  <!-- check -->
+  <xacro:property name="servo_no_load_speed" value="250"/> <!-- check -->
 
   <!-- Inertia of a thick-walled cylindrical tube with open ends. Height is
        measured along the z axis, which is the tube's axis. inner_rad and

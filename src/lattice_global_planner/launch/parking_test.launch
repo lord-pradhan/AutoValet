@@ -45,16 +45,16 @@
 
 
 
-		<param name="planner_frequency" value="0.25" />
+		<param name="planner_frequency" value="0.5" />
 		<param name="planner_patience" value="5.0" />
 
 		<!-- Teb local planner -->
-		<!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
 
 		<!-- Local Planner from Jackal -->
-		<param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+		<!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>  -->
 
-		<param name="controller_frequency" value="1.0" />
+		<param name="controller_frequency" value="10.0" />
 		<param name="controller_patience" value="15.0" />
 
                 <param name="clearing_rotation_allowed" value="false" /> 
