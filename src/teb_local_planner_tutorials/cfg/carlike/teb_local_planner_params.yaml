@@ -5,12 +5,12 @@ TebLocalPlannerROS:
  # Trajectory
   
  teb_autosize: True
- dt_ref: 1.0
- dt_hysteresis: 0.5
- max_samples: 2000
+ dt_ref: 0.5
+ dt_hysteresis: 0.1
+ max_samples: 500
  global_plan_overwrite_orientation: False
  allow_init_with_backwards_motion: True
- max_global_plan_lookahead_dist: 1.0
+ max_global_plan_lookahead_dist: 15.0
  global_plan_viapoint_sep: -1
  global_plan_prune_distance: 1
  exact_arc_length: False
