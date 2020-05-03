@@ -1,0 +1,12 @@
+*/lib/*
+*/build/*
+*/msg_gen/*
+*/srv_gen/*
+*/bin/*
+*~
+controller_manager_msgs/src/controller_manager_msgs/msg/*
+controller_manager_msgs/src/controller_manager_msgs/srv/*
+*.pyc
+qtcreator-build-*
+CMakeLists.txt.user
+gh-pages

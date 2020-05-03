@@ -14,7 +14,7 @@
     <!-- <param name="/use_sim_time" value="true"/> -->
 
 	<!--  ************** Gazebo Simulator ***************  -->
-	<include file="$(find jackal_gazebo)/launch/parking_world.launch" />
+	<include file="$(find jackal_gazebo)/launch/parking_world_rb.launch" />
 
 
     <!--  ************** Stage Simulator ***************  -->
@@ -67,13 +67,13 @@
 
 	</node>
 
-	<node pkg="amcl" type="amcl" name="amcl" output="screen">
+	<!-- <node pkg="amcl" type="amcl" name="amcl" output="screen">
 		<rosparam file="$(find teb_local_planner_tutorials)/cfg/amcl_params.yaml" command="load" />
 
-	        <param name="initial_pose_x"            value="2"/>
-		<param name="initial_pose_y"            value="2"/>
+	        <param name="initial_pose_x"            value="0"/>
+		<param name="initial_pose_y"            value="0"/>
 		<param name="initial_pose_a"            value="0"/>
-	</node>
+	</node> -->
 
 
 	<!--  **************** Visualisation ****************  -->

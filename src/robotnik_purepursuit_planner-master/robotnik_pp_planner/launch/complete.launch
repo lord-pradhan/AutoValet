@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- roslaunch arguments -->
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <!-- summit_xl_control launch file -->
+  <!--include file="$(find summit_xl_control)/launch/summit_xl_control.launch" /-->
+
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <!--include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find robospect_planner)/worlds/fake_tunnel.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="headless" value="false"/>
+  </include-->
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <!--param name="robot_description"
+         command="$(find xacro)/xacro.py '$(find summit_xl_description)/robots/summit_xl.urdf.xacro'" /-->
+         
+  <!-- Call a python script to the run a service call to gazebo_ros to spawn a URDF robot -->
+  <!--node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        args="-urdf -model summit_xl -param robot_description -x -12"/-->
+
+        
+     <!-- Convert laser scan to 3D point cloud into fixed frame not rotating along with sensor.
+       Also performs scan shadow point filtering -->
+  <node pkg="hector_laserscan_to_pointcloud" type="laserscan_to_pointcloud_node" name="scan_to_ptcld_front" respawn="true">
+    <remap from="/scan" to="/s3000_laser_front/scan"/>
+    <remap from="/scan_cloud" to="/scan_cloud_front"/> 
+    <param name="min_range" value="0.05" />
+    <param name="use_high_fidelity_projection" value="true" />
+    <param name="target_frame" value="base_footprint" />
+    <!-- The scan shadow filter removes laser readings that are most likely caused by the veiling effect 
+	 when the edge of an object is being scanned -->
+    <rosparam command="load" file="$(find hector_laserscan_to_pointcloud)/config/default_scan_shadow_filter.yaml" />
+  </node>
+  
+  <node pkg="hector_laserscan_to_pointcloud" type="laserscan_to_pointcloud_node" name="scan_to_ptcld_back" respawn="true">
+    <remap from="/scan" to="/s3000_laser_back/scan"/> 
+    <remap from="/scan_cloud" to="/scan_cloud_back"/> 
+    <param name="min_range" value="0.05" />
+    <param name="use_high_fidelity_projection" value="true" />
+    <param name="target_frame" value="base_footprint" />
+    <!-- The scan shadow filter removes laser readings that are most likely caused by the veiling effect 
+	 when the edge of an object is being scanned -->
+    <rosparam command="load" file="$(find hector_laserscan_to_pointcloud)/config/default_scan_shadow_filter.yaml" />
+  </node>
+  
+  <node pkg="robotnik_pp_planner" type="path_marker.py" name="path_marker" output="screen">
+	<param name="frame_id" value="/base_footprint" type="string"/>
+        <param name="planner" value="robotnik_pp_planner" type="string"/>
+  </node>
+ 
+
+ <!-- start purepursuit node -->
+  <node pkg="robotnik_pp_planner" type="robotnik_pp_planner_node" name="robotnik_pp_planner" output="screen">
+	<!-- Options: MAP, ODOM -->	
+	<param name="position_source" value="ODOM" type="string"/>
+	<param name="target_frame" value="agvs/base_footprint" type="string"/>
+	<param name="d_lookahear_min" value="0.4"/>
+  	<param name="kr" value="0.2"/>
+	<param name="desired_freq" value="50.0"/>
+
+	<!--for Ackerman-->
+	<param name="d_dist_wheel_to_center" value="1.0"/>
+	<!-- type of velocity command (depending on odometry configuration): Ackermann, Twist -->
+	<param name="command_type" value="Ackermann"/>
+ 	<param name="odom_topic" value="/agvs_robot_control/odom"/>
+        <param name="cmd_topic_vel" value="/agvs_robot_control/command"/>
+	<!--param name="command_type" value="Twist"/>
+ 	<param name="odom_topic" value="/summit_xl/odom"/>
+    <param name="cmd_topic_vel" value="/cmd_vel"/>
+    <param name="obstacle_range" value="1.0"/-->
+    
+    <param name="nav_obstacle_range_" value="0.5"/>
+    <param name="nav_lateral_clearance_" value="0.2"/>
+    <param name="footprint_length_" value="1.6"/>
+    <param name="footprint_width_" value="0.6"/>
+
+  </node>
+
+
+</launch>

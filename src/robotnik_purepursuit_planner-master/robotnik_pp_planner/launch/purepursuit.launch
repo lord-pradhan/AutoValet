@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="run_front_laser_to_pcl" default="false"/>
+  <arg name="run_rear_laser_to_pcl" default="false"/>
+  <arg name="obstacle_avoidance" default="false"/>
+  <arg name="front_scan" default="s3000_laser_front/scan"/>
+  <arg name="rear_scan" default="s3000_laser_back/scan"/>
+  <arg name="global_frame" default="map"/>
+  <arg name="base_frame" default="base_footprint"/>
+  <!-- frame used for reference in the obstacle detection -->
+  <arg name="front_obstacle_frame" default="base_footprint"/>
+  <arg name="rear_obstacle_frame" default="base_footprint"/>
+  <arg name="cmd_vel" default="cmd_vel"/>
+
+  <!-- Uncomment to use the collision detection based on laserscan and pointclouds -->
+  <node if="$(arg run_front_laser_to_pcl)" pkg="hector_laserscan_to_pointcloud" type="laserscan_to_pointcloud_node" name="scan_to_ptcld_front" respawn="true">
+	<remap from="scan" to="$(arg front_scan)"/>
+	<remap from="scan_cloud" to="scan_cloud_front"/> 
+	<param name="min_range" value="0.05"/>
+	<param name="use_high_fidelity_projection" value="true"/>
+	<param name="target_frame" value="$(arg front_obstacle_frame)"/>
+	<rosparam command="load" file="$(find hector_laserscan_to_pointcloud)/config/default_scan_shadow_filter.yaml"/>
+  </node>
+
+  <node if="$(arg run_rear_laser_to_pcl)" pkg="hector_laserscan_to_pointcloud" type="laserscan_to_pointcloud_node" name="scan_to_ptcld_back" respawn="true">
+	<remap from="scan" to="$(arg rear_scan)"/> 
+	<remap from="scan_cloud" to="scan_cloud_back"/> 
+	<param name="min_range" value="0.05" />
+	<param name="use_high_fidelity_projection" value="true" />
+	<param name="target_frame" value="$(arg obstacle_frame)" />
+	<rosparam command="load" file="$(find hector_laserscan_to_pointcloud)/config/default_scan_shadow_filter.yaml" />
+  </node>
+  
+  <!-- start purepursuit node -->
+  <node pkg="robotnik_pp_planner" type="robotnik_pp_planner_node" name="robotnik_pp_planner" output="screen">
+	<param name="global_frame_id" value="$(arg global_frame)" type="string"/>
+    	<param name="base_frame_id" value="$(arg base_frame)" type="string"/>
+
+	<param name="d_lookahead_min" value="0.7"/>
+	<param name="d_lookahead_max" value="1.1"/>
+  	<param name="kr" value="0.2"/>
+	<param name="desired_freq" value="100.0"/>
+
+	<!--for Ackerman-->
+	<param name="d_dist_wheel_to_center" value="1.0"/>
+	
+	<!-- type of velocity command (depending on odometry configuration): Ackermann, Twist -->
+	<param name="command_type" value="Ackermann"/>
+	<!--<param name="command_type" value="Twist"/>    -->
+
+ 	<!--param name="odom_topic" value="/odom"/--> <!-- DEPRECATED-->
+	<!--param name="position_source" value="MAP" type="string"/--><!-- DEPRECATED-->
+	<!-- param name="target_frame" value="base_footprint" type="string"/--><!-- DEPRECATED-->
+	
+        <param name="cmd_topic_vel" value="$(arg cmd_vel)"/>
+
+	<param name="obstacle_range" value="1.1"/>
+	<param name="lateral_clearance" value="0.2"/>
+	<param name="footprint_length" value="1.6"/>
+	<param name="footprint_width" value="0.6"/>
+	<param name="obstacle_avoidance" value="$(arg obstacle_avoidance)"/>
+	<param name="static_lookahead" value="false"/>
+	<param name="goal_tolerance" value="0.025"/>
+	<!--param name="path_turn_radius_distance" value="0.20"/-->
+        
+	
+  </node>
+
+</launch>
+
+

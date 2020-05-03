@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <name>robotnik_purepursuit_planner</name>
+  <version>0.1.0</version>
+  <description>The robotnik_purepursuit_planner package</description>
+
+  <maintainer email="rnavarro@robotnik.es">Román Navarro</maintainer> 
+  <author email="rnavarro@robotnik.es">Román Navarro</author> 
+  <license>BSD</license>
+
+  <url type="website">http://wiki.ros.org/robotnik_purepursuit_planner</url>
+  <url type="repository">https://github.com/RomanRobotnik/robotnik_purepursuit_planner.git</url>
+  <url type="bugtracker">https://github.com/RomanRobotnik/robotnik_purepursuit_planner/issues</url>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <run_depend>robotnik_pp_planner</run_depend>
+  <run_depend>robotnik_pp_msgs</run_depend>
+
+  <export><metapackage/></export>
+
+</package>

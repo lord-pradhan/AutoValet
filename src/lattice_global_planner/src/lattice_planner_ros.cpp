@@ -140,13 +140,12 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         return false;
     }
 
-
     auto start1 = high_resolution_clock::now();
 
     //initialise vars
     int elemCt = 0;
-    int x_size = width;//(int) x_ul/graph_dx +1;
-    int y_size = height;//(int) y_ul/graph_dy +1;
+    int x_size = width/2;//(int) x_ul/graph_dx +1;
+    int y_size = height/2;//(int) y_ul/graph_dy +1;
 
     int dX[numOfDirs] = { -1, -1, -1,  0,  0,  1, 1, 1};
     int dY[numOfDirs] = { -1,  0,  1, -1,  1, -1, 0, 1}; 
@@ -167,7 +166,20 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     double roll, pitch, yaw;
     m1.getRPY(roll, pitch, yaw);
 
+    unsigned int start_x_cm, start_y_cm, goal_x_cm, goal_y_cm;
     float x_start_world = start.pose.position.x, y_start_world = start.pose.position.y;
+    float x_goal_world = goal.pose.position.x, y_goal_world = goal.pose.position.y;
+
+    if( !costmap_->worldToMap(x_start_world, y_start_world, start_x_cm, start_y_cm) ||
+        (double) costmap_->getCost(start_x_cm, start_y_cm) > collision_thresh  ||
+        !costmap_->worldToMap(x_goal_world, y_goal_world, goal_x_cm, goal_y_cm) ||
+        (double) costmap_->getCost(goal_x_cm, goal_y_cm) > collision_thresh ) {
+
+        ROS_INFO("incorrect start or goal states, try again");
+        return false;
+    }
+
+
     bool pick1 = world2Cont(x_start_world, y_start_world, x_start_cont, y_start_cont);
     coordsinit.x = x_start_cont; coordsinit.y = y_start_cont; coordsinit.theta = yaw;    
 
@@ -180,13 +192,12 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     tf::Matrix3x3 m2(q2);
     m2.getRPY(roll, pitch, yaw);    
 
-    float x_goal_world = goal.pose.position.x, y_goal_world = goal.pose.position.y;
     bool pick2 = world2Cont(x_goal_world, y_goal_world, x_goal_cont, y_goal_cont);
     goalCoord.x = x_goal_cont; goalCoord.y = y_goal_cont; goalCoord.theta = yaw;
 
-    if(!pick1 || !pick2){
-        return false;
-    }
+    // if(!pick1 || !pick2){
+    //     return false;
+    // }
 
     //shift to discrete
     CoordDisc coordsInitDisc( ContXY2Disc(coordsinit.x, graph_dx), ContXY2Disc(coordsinit.y, graph_dy),
@@ -198,7 +209,8 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     // Run Dijkstra only when goal is updated
     if(functionCall==0 || !(coordsGoalDisc == coordsGoalDiscPrev) ){
 
-    	State_pre state_init_pre;
+    	gridmap_pre.clear();
+        State_pre state_init_pre;
 	    gridmap_pre.resize(y_size, std::vector<State_pre>(x_size, state_init_pre) );
 
 	    // initialize map
@@ -300,10 +312,18 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         State temp = open_set.top();
         int tempID = open_set.top().getID();
         closed_set.insert(GetIndex(temp.getCoords()));
-        open_set.pop();
+        open_set.pop();        
 
         // extend implicit graph
         for(auto i : readFile.inputPrims){
+
+            auto stop_temp = high_resolution_clock::now();
+            auto duration_temp = duration_cast<milliseconds>(stop_temp - start1);
+            if( duration_temp.count() > 7000 ){
+
+                ROS_INFO("unable to find a path, try a different goal");
+                return false;
+            }
 
             if( temp.getCoords().theta== i.startAngleDisc ){
 
@@ -317,19 +337,54 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
                 double newy_cont = DiscXY2Cont(tempPose.y, graph_dy);
 
                 // ROS_INFO("newx_cont is %lf", newx_cont);
-                // ROS_INFO("newy_cont is %lf", newy_cont);
+                // ROS_INFO("newy_cont is %lf", newy_cont);      
 
                 float newx_world, newy_world;
                 cont2World(newx_cont, newy_cont, newx_world, newy_world);
-
                 unsigned int new_x_cmap, new_y_cmap;
 
-                bool free = costmap_->worldToMap(newx_world, newy_world, new_x_cmap, new_y_cmap);
+                // check end pose
+                bool free = ( costmap_->worldToMap(newx_world, newy_world, new_x_cmap, new_y_cmap) ) &&
+                    ( (double) costmap_->getCost(new_x_cmap, new_y_cmap) < collision_thresh ) ;
+
+                
+                // check interm poses
+                if(free){   
+
+                    for(auto i_interm : i.intermPoses){                        
+
+                        // convert to discrete
+                        float interm_x_disc = ContXY2Disc( i_interm.x,  graph_dx);
+                        float interm_y_disc = ContXY2Disc( i_interm.y,  graph_dy);
+                        // float interm_theta_disc = ContTheta2Disc( i_interm.theta,  numAngles);
+
+                        // addition in discrete
+                        float interm_newx_disc = temp.getCoords().x + interm_x_disc;
+                        float interm_newy_disc = temp.getCoords().y + interm_y_disc;
+
+                        // back to cont
+                        float interm_newx_cont = DiscXY2Cont(interm_newx_disc, graph_dx);
+                        float interm_newy_cont = DiscXY2Cont(interm_newy_disc, graph_dy);
+
+                        // switch to world
+                        float interm_newx_world, interm_newy_world;
+                        cont2World(interm_newx_cont, interm_newy_cont, interm_newx_world, interm_newy_world);
+                        unsigned int interm_newx_cmap, interm_newy_cmap;
+
+                        if( !costmap_->worldToMap(interm_newx_world, interm_newy_world, interm_newx_cmap, interm_newy_cmap) ||
+                            (double) costmap_->getCost(interm_newx_cmap, interm_newy_cmap) > collision_thresh ){
+
+                            free = false;
+                            // ROS_INFO("interm poses clash");
+                            break;
+                        }
+                    }
+                }
+
 
                 if(free){
 
-                    if( (double) costmap_->getCost(new_x_cmap, new_y_cmap) < collision_thresh &&
-                        (closed_set.find(GetIndex(tempPose))==closed_set.end()) ){
+                    if( closed_set.find(GetIndex(tempPose))==closed_set.end() ){
 
                         State newState(tempPose);
                         newState.setH(coordsGoalDisc, gridmap_pre[tempPose.y][tempPose.x].G_val);
@@ -352,7 +407,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
                         elemCt++;
 
                         fullGraph[elemCt-1].setG( fullGraph[tempID].getG() + i.cost + 
-                                                    (double) costmap_->getCost(new_x_cmap, new_y_cmap) );
+                            (double) costmap_->getCost(new_x_cmap, new_y_cmap) );
                         // ROS_INFO_STREAM("G-value for inserted state is "<< fullGraph[elemCt-1].getG() );
                         open_set.push(fullGraph[elemCt-1]);                 
                     }
@@ -367,7 +422,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         }
 
         if(open_set.top().getCoords() == coordsGoalDisc){
-            // ROS_INFO("Target expanded");
+            ROS_INFO("Target expanded");
         }
     }
 
@@ -393,7 +448,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
             }
             optPath.push( fullGraph[optID] );
         }
-        // ROS_INFO("Path found!");
+        ROS_INFO("Path found!");
     }
     else{
 

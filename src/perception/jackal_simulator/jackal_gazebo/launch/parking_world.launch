@@ -2,7 +2,7 @@
   <arg name="use_sim_time" default="true" />
   <arg name="gui" default="true" />
   <arg name="headless" default="false" />
-  <arg name="world_name" default="$(find jackal_gazebo)/worlds/parking.world" />
+  <arg name="world_name" default="$(find jackal_gazebo)/worlds/parking1.world" />
 
   <!-- Short-term hack to support the original front_laser:=true argument for spawning
        the simulator. This will be removed in favour of using the config:=x arg instead. -->
@@ -25,6 +25,7 @@
   </include>
 
   <!-- Load Jackal's description, controllers, and teleop nodes. -->
+  
   <include file="$(find jackal_description)/launch/description.launch">
     <arg name="config" value="$(arg config)" />
   </include>
@@ -33,11 +34,28 @@
     <arg name="joystick" value="false"/>
   </include>
 
+
   <!-- Spawn Jackal -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-urdf -model jackal -param robot_description -x 0.0 -y 0.0 -z 0.25" />
+        args="-urdf -model jackal -param robot_description -x -19.0 -y 6.5 -z 0.25" />
+  
 
-  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" /> 
+  <!-- Spawn rbcar -->
+    <!-- start gazebo simulation -->
+
+<!--
+  <include file="$(find rbcar_gazebo)/launch/rbcar.launch"/>
+-->
+  <!-- start robot_control node -->
+  <!--
+  <include file="$(find rbcar_robot_control)/launch/rbcar_robot_control.launch"/>
+  -->
+
+  <!-- start joystick 
+  <include file="$(find rbcar_joystick)/launch/rbcar_joystick.launch"/>
+  -->
+
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" />
 
 
 </launch>
