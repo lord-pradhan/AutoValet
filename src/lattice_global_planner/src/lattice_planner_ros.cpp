@@ -171,10 +171,11 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     float x_goal_world = goal.pose.position.x, y_goal_world = goal.pose.position.y;
 
     if( !costmap_->worldToMap(x_start_world, y_start_world, start_x_cm, start_y_cm) ||
-        (double) costmap_->getCost(start_x_cm, start_y_cm) > collision_thresh  ||
+        (double) costmap_->getCost(start_x_cm, start_y_cm) >= collision_thresh  ||
         !costmap_->worldToMap(x_goal_world, y_goal_world, goal_x_cm, goal_y_cm) ||
-        (double) costmap_->getCost(goal_x_cm, goal_y_cm) > collision_thresh ) {
+        (double) costmap_->getCost(goal_x_cm, goal_y_cm) >= collision_thresh ) {
 
+        fullGraph.clear();
         ROS_INFO("incorrect start or goal states, try again");
         return false;
     }
@@ -268,7 +269,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 	                    open_set_pre.push(gridmap_pre[newy_disc][newx_disc]);
 	                    // ROS_INFO("pushed H-val during Dijkstra is %lf", gridmap_pre[newy_disc][newx_disc].G_val);
 	                }
-	                else if((double) (costmap_->getCost(x_new_cmap, y_new_cmap)) > collision_thresh) {
+	                else if((double) (costmap_->getCost(x_new_cmap, y_new_cmap)) >= collision_thresh) {
 	                    // ROS_INFO("Encountered obstacle");
 	                    // printf("cost of new cell is %lf\n", (double) costmap_->getCost(x_new_cmap, y_new_cmap) );
 	                }
@@ -322,6 +323,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
             if( duration_temp.count() > 7000 ){
 
                 ROS_INFO("unable to find a path, try a different goal");
+                fullGraph.clear();
                 return false;
             }
 
@@ -372,7 +374,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
                         unsigned int interm_newx_cmap, interm_newy_cmap;
 
                         if( !costmap_->worldToMap(interm_newx_world, interm_newy_world, interm_newx_cmap, interm_newy_cmap) ||
-                            (double) costmap_->getCost(interm_newx_cmap, interm_newy_cmap) > collision_thresh ){
+                            (double) costmap_->getCost(interm_newx_cmap, interm_newy_cmap) >= collision_thresh ){
 
                             free = false;
                             // ROS_INFO("interm poses clash");
@@ -498,6 +500,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         return true;
     }
     else{
+        fullGraph.clear();
         return false;
     }
 }

@@ -5,7 +5,7 @@ TebLocalPlannerROS:
  # Trajectory
   
  teb_autosize: True
- dt_ref: 0.5
+ dt_ref: 1.0
  dt_hysteresis: 0.1
  max_samples: 500
  global_plan_overwrite_orientation: False
@@ -20,11 +20,11 @@ TebLocalPlannerROS:
  # Robot
          
  max_vel_x: 10
- max_vel_x_backwards: 10
+ max_vel_x_backwards: 3
  max_vel_y: 10.0
  max_vel_theta: 5 # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
- acc_lim_x: 5
- acc_lim_theta: 2.5
+ acc_lim_x: 4
+ acc_lim_theta: 2
 
  # ********************** Carlike robot parameters ********************
  min_turning_radius: 4        # Min turning radius of the carlike robot (compute value using a model or adjust with rqt_reconfigure manually)
@@ -52,7 +52,7 @@ TebLocalPlannerROS:
     
  # Obstacles
     
- min_obstacle_dist: 0.27 # This value must also include our robot's expansion, since footprint_model is set to "line".
+ min_obstacle_dist: 0.5 # This value must also include our robot's expansion, since footprint_model is set to "line".
  inflation_dist: 0.9
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 1.0
@@ -78,7 +78,7 @@ TebLocalPlannerROS:
  weight_acc_lim_x: 1
  weight_acc_lim_theta: 1
  weight_kinematics_nh: 1000
- weight_kinematics_forward_drive: 1
+ weight_kinematics_forward_drive: 1000
  weight_kinematics_turning_radius: 1
  weight_optimaltime: 1 # must be > 0
  weight_shortest_path: 0
@@ -91,7 +91,7 @@ TebLocalPlannerROS:
 
  # Homotopy Class Planner
 
- enable_homotopy_class_planning: True
+ enable_homotopy_class_planning: False
  enable_multithreading: True
  max_number_classes: 4
  selection_cost_hysteresis: 1.0
