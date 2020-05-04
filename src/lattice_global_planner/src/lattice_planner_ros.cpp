@@ -65,7 +65,7 @@ void LatticePlannerROS::initialize(std::string name, costmap_2d::Costmap2D* cost
         height = costmap_->getSizeInCellsY();
         resolution = costmap_->getResolution();
 
-
+        // costmap_->setInflationParameters(6.0, 10.0);
         // read in motion primitives file
         ROS_INFO("Reading in motion primitives\n");
         const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";    

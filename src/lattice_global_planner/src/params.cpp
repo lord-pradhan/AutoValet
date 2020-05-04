@@ -4,7 +4,7 @@ double PI = 3.1416;
 // double vel_plan = 2;
 // double euler_dt = 0.1;
 
-double collision_thresh= 0.65;
+double collision_thresh= 100;
 
 double graph_dx = 0.1;
 double graph_dy = 0.1;
