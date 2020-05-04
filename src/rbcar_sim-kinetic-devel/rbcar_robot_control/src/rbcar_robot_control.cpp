@@ -459,7 +459,7 @@ void PublishOdometry()
     // send the transform over /tf
 	// activate / deactivate with param
 	// this tf in needed when not using robot_pose_ekf
-    if (publish_odom_tf_) odom_broadcaster.sendTransform(odom_trans);  
+    // if (publish_odom_tf_) odom_broadcaster.sendTransform(odom_trans);  - uncomment if abs odom not given
         
     //next, we'll publish the odometry message over ROS
     nav_msgs::Odometry odom;
@@ -494,8 +494,8 @@ void PublishOdometry()
 	for(int i = 0; i < 6; i++)
      		odom.twist.covariance[6*i+i] = 0.1;  // test 0.001
 
-    //publish the message
-    odom_pub_.publish(odom);
+    //publish the message -  uncomment if no abs position given
+    // odom_pub_.publish(odom);
 }
 
 /// Controller stopping

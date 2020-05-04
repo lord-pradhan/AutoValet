@@ -1,0 +1,15 @@
+<!-- 
+  Simulate a carlike robot with the teb_local_planner in stage:
+  - stage
+  - map_server
+  - move_base
+  - static map
+  - amcl
+  - rviz view
+ -->
+
+<launch>
+
+<include file="$(find jackal_gazebo)/launch/parking_world_rb_mapping.launch" /> 
+
+</launch>
