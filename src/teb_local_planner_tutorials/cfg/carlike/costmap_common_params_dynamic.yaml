@@ -10,14 +10,14 @@ map_type: costmap
 
 obstacle_layer:
   enabled: true
-  obstacle_range: 3.0
-  raytrace_range: 3.5
-  inflation_radius: 2.0
+  obstacle_range: 20.0
+  raytrace_range: 20.0
+  inflation_radius: 1.0
   track_unknown_space: false
   combination_method: 1
 
   observation_sources: laser_scan_sensor
-  laser_scan_sensor: {data_type: LaserScan, topic: scan, marking: true, clearing: true}
+  laser_scan_sensor: {data_type: LaserScan, topic: front_laser/scan, marking: true, clearing: true}
 
 
 inflation_layer:

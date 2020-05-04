@@ -288,7 +288,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     }
 
     
-
+    fullGraph.clear();
     // initial conditions
     State state_init(coordsInitDisc);
     state_init.setH(coordsGoalDisc, gridmap_pre[coordsInitDisc.y][coordsInitDisc.x].G_val);
@@ -320,10 +320,11 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
             auto stop_temp = high_resolution_clock::now();
             auto duration_temp = duration_cast<milliseconds>(stop_temp - start1);
-            if( duration_temp.count() > 9000 ){
+            if( duration_temp.count() > 20000 ){
 
                 ROS_INFO("Taking too long to find a path, try a different goal");
                 fullGraph.clear();
+                gridmap_pre.clear();
                 return false;
             }
 
@@ -456,6 +457,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
         ROS_INFO("Open set is empty, path can't be found. Exiting");
         fullGraph.clear();
+        gridmap_pre.clear();
         return false;
     }
 
@@ -500,11 +502,13 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         auto stop_end = high_resolution_clock::now();
         auto duration_end = duration_cast<milliseconds>(stop_end - start1);
         ROS_INFO_STREAM("Path found! Total planning time is "<<duration_end.count());
+        gridmap_pre.clear();
         fullGraph.clear();
         return true;
     }
     else{
         fullGraph.clear();
+        gridmap_pre.clear();
         return false;
     }
 }

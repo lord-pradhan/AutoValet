@@ -1,8 +1,8 @@
-[  0%] Built target std_msgs_generate_messages_nodejs
 [  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_nodejs
 [  0%] Built target _ball_chaser_generate_messages_check_deps_DriveToTarget
-[  0%] Built target std_msgs_generate_messages_lisp
 [  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_lisp
 [  0%] Built target std_msgs_generate_messages_cpp
 [ 18%] Built target ball_chaser_generate_messages_eus
 [ 27%] Built target ball_chaser_generate_messages_nodejs
