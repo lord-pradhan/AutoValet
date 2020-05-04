@@ -170,8 +170,8 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     float x_start_world = start.pose.position.x, y_start_world = start.pose.position.y;
     float x_goal_world = goal.pose.position.x, y_goal_world = goal.pose.position.y;
 
-    if( !costmap_->worldToMap(x_start_world, y_start_world, start_x_cm, start_y_cm) ||
-        (double) costmap_->getCost(start_x_cm, start_y_cm) >= collision_thresh  ||
+    if( //!costmap_->worldToMap(x_start_world, y_start_world, start_x_cm, start_y_cm) ||
+        //(double) costmap_->getCost(start_x_cm, start_y_cm) >= collision_thresh  ||
         !costmap_->worldToMap(x_goal_world, y_goal_world, goal_x_cm, goal_y_cm) ||
         (double) costmap_->getCost(goal_x_cm, goal_y_cm) >= collision_thresh ) {
 
@@ -230,7 +230,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 	    std::priority_queue< State_pre, std::vector<State_pre>, CompareF_pre > open_set_pre;
 	    open_set_pre.push(gridmap_pre[coordsGoalDisc.y][coordsGoalDisc.x]);
 
-	    ROS_INFO("Before entering Dijkstra expansion while loop");
+	    // ROS_INFO("Before entering Dijkstra expansion while loop");
 
 	    while( !open_set_pre.empty() ){
 
@@ -282,9 +282,9 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
 	    ROS_INFO("Dijkstra expansion done");
 
-	    auto stop1 = high_resolution_clock::now();
-	    auto duration1 = duration_cast<milliseconds>(stop1 - start1);
-	    ROS_INFO_STREAM("Time taken for Dijkstra is "<< duration1.count());
+	    // auto stop1 = high_resolution_clock::now();
+	    // auto duration1 = duration_cast<milliseconds>(stop1 - start1);
+	    // ROS_INFO_STREAM("Time taken for Dijkstra is "<< duration1.count());
     }
 
     
@@ -320,9 +320,9 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
             auto stop_temp = high_resolution_clock::now();
             auto duration_temp = duration_cast<milliseconds>(stop_temp - start1);
-            if( duration_temp.count() > 7000 ){
+            if( duration_temp.count() > 9000 ){
 
-                ROS_INFO("unable to find a path, try a different goal");
+                ROS_INFO("Taking too long to find a path, try a different goal");
                 fullGraph.clear();
                 return false;
             }
@@ -424,7 +424,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         }
 
         if(open_set.top().getCoords() == coordsGoalDisc){
-            ROS_INFO("Target expanded");
+            // ROS_INFO("Target expanded");
         }
     }
 
@@ -450,11 +450,13 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
             }
             optPath.push( fullGraph[optID] );
         }
-        ROS_INFO("Path found!");
+        // ROS_INFO("Path found!");
     }
     else{
 
         ROS_INFO("Open set is empty, path can't be found. Exiting");
+        fullGraph.clear();
+        return false;
     }
 
     optPath.push(fullGraph[0]);
@@ -495,7 +497,9 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
         
         functionCall++;
         coordsGoalDiscPrev=coordsGoalDisc;
-
+        auto stop_end = high_resolution_clock::now();
+        auto duration_end = duration_cast<milliseconds>(stop_end - start1);
+        ROS_INFO_STREAM("Path found! Total planning time is "<<duration_end.count());
         fullGraph.clear();
         return true;
     }

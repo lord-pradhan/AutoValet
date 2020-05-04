@@ -45,7 +45,7 @@
 
 
 
-		<param name="planner_frequency" value="0.5" />
+		<param name="planner_frequency" value="1.0" />
 		<param name="planner_patience" value="5.0" />
 
 		<!-- Teb local planner -->
