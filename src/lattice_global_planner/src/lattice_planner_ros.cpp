@@ -1,5 +1,3 @@
-#include <pluginlib/class_list_macros.h>
-#include <ros/console.h>
 #include "lattice_planner_ros.h"
 
 //register this planner as a BaseGlobalPlanner plugin
@@ -68,7 +66,13 @@ void LatticePlannerROS::initialize(std::string name, costmap_2d::Costmap2D* cost
         // costmap_->setInflationParameters(6.0, 10.0);
         // read in motion primitives file
         ROS_INFO("Reading in motion primitives\n");
-        const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";    
+        // wxString mprimPath = wxString::FromAscii((ros::package::getPath("lattice_global_planner") + "/include/lattice_global_planner/prim_test.mprim").c_str());
+        // const char* sMotPrimFile = mprimPath.mb_str();
+        // const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";
+        std::string package_str = ros::package::getPath("lattice_global_planner");
+        std::string path_str("/include/lattice_global_planner/prim_test.mprim");
+        package_str.append(path_str);
+        const char* sMotPrimFile = package_str.c_str();
 
         if (sMotPrimFile != NULL) {
             FILE* fMotPrim = fopen(sMotPrimFile, "r");
@@ -141,6 +145,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     }
 
     auto start1 = high_resolution_clock::now();
+    // ROS_INFO("started planning");
 
     //initialise vars
     int elemCt = 0;

@@ -1,0 +1,12 @@
+
+<launch>
+
+  <include file="$(find jackal_navigation)/launch/mygmapping_rbcar_demo.launch" />
+
+	<!--  ************** Gazebo Simulator ***************  -->
+	<include file="$(find jackal_gazebo)/launch/parking_world_rb_mapping_only.launch" />
+	<node pkg="abspos_rbcar" type="abspos_rbcar.py" name="abs_pos" />
+	<node pkg="teb_local_planner_tutorials" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" />
+
+
+</launch>

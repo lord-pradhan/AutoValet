@@ -1,22 +1,22 @@
 Determining if the pthread_create exist failed with the following output:
 Change Dir: /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_936df/fast"
-/usr/bin/make -f CMakeFiles/cmTC_936df.dir/build.make CMakeFiles/cmTC_936df.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_cf96c/fast"
+/usr/bin/make -f CMakeFiles/cmTC_cf96c.dir/build.make CMakeFiles/cmTC_cf96c.dir/build
 make[1]: Entering directory '/home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_936df.dir/CheckSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_936df.dir/CheckSymbolExists.c.o   -c /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_936df
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_936df.dir/link.txt --verbose=1
-/usr/bin/cc      -rdynamic CMakeFiles/cmTC_936df.dir/CheckSymbolExists.c.o  -o cmTC_936df 
-CMakeFiles/cmTC_936df.dir/CheckSymbolExists.c.o: In function `main':
+Building C object CMakeFiles/cmTC_cf96c.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_cf96c.dir/CheckSymbolExists.c.o   -c /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_cf96c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cf96c.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_cf96c.dir/CheckSymbolExists.c.o  -o cmTC_cf96c 
+CMakeFiles/cmTC_cf96c.dir/CheckSymbolExists.c.o: In function `main':
 CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_936df.dir/build.make:97: recipe for target 'cmTC_936df' failed
-make[1]: *** [cmTC_936df] Error 1
+CMakeFiles/cmTC_cf96c.dir/build.make:97: recipe for target 'cmTC_cf96c' failed
+make[1]: *** [cmTC_cf96c] Error 1
 make[1]: Leaving directory '/home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_936df/fast' failed
-make: *** [cmTC_936df/fast] Error 2
+Makefile:126: recipe for target 'cmTC_cf96c/fast' failed
+make: *** [cmTC_cf96c/fast] Error 2
 
 File /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
@@ -36,20 +36,20 @@ int main(int argc, char** argv)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_940d8/fast"
-/usr/bin/make -f CMakeFiles/cmTC_940d8.dir/build.make CMakeFiles/cmTC_940d8.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_1deca/fast"
+/usr/bin/make -f CMakeFiles/cmTC_1deca.dir/build.make CMakeFiles/cmTC_1deca.dir/build
 make[1]: Entering directory '/home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_940d8.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_940d8.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_940d8
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_940d8.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_940d8.dir/CheckFunctionExists.c.o  -o cmTC_940d8 -lpthreads 
+Building C object CMakeFiles/cmTC_1deca.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_1deca.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_1deca
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1deca.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_1deca.dir/CheckFunctionExists.c.o  -o cmTC_1deca -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_940d8.dir/build.make:97: recipe for target 'cmTC_940d8' failed
-make[1]: *** [cmTC_940d8] Error 1
+CMakeFiles/cmTC_1deca.dir/build.make:97: recipe for target 'cmTC_1deca' failed
+make[1]: *** [cmTC_1deca] Error 1
 make[1]: Leaving directory '/home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_940d8/fast' failed
-make: *** [cmTC_940d8/fast] Error 2
+Makefile:126: recipe for target 'cmTC_1deca/fast' failed
+make: *** [cmTC_1deca/fast] Error 2
 
 

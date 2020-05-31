@@ -3,6 +3,9 @@
 
 	<!--  ************** Gazebo Simulator ***************  -->
 	<include file="$(find jackal_gazebo)/launch/parking_world_rb.launch" />
+	<node pkg="abspos_rbcar" type="abspos_rbcar.py" name="abs_pos" />
+	<node pkg="teb_local_planner_tutorials" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" />
+
 
 	
 	  ************** Navigation ***************  
@@ -14,7 +17,7 @@
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
   	
 
-  		<!-- If you need to swap out with global planner -->
+    <!-- If you want to swap out with global planner -->
 		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
 
 		<!-- This is the planner I am testing -->

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>abspos_rbcar</name>
+  <version>0.6.2</version>
+  <description>Generic keyboard teleop for twist robots.</description>
+
+  <maintainer email="soumyatattwa@gmail.com">Soumyatattwa</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://wiki.ros.org/teleop_twist_keyboard</url>
+
+  <author>Graylin Trevor Jay</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>gazebo_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+</package>
