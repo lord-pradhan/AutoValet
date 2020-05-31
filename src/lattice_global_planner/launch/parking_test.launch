@@ -1,4 +1,4 @@
-
+<!-- This is the launch file for the static map case -->
 <launch>
 
 	<!--  ************** Gazebo Simulator ***************  -->
@@ -17,7 +17,7 @@
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
   	
 
-  		<!-- If you want to swap out with global planner -->
+    <!-- If you want to swap out with global planner -->
 		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
 
 		<!-- This is the planner I am testing -->
