@@ -10,7 +10,7 @@ A lattice-graph planner using kinodynamic Ackermann primitives, based on [1], is
 To compile the code, clone the repo, build the workspace using catkin build, and download the neccesary dependencies.
 
 Four main demos are built in this project -
-1. Golf-cart navigating a pre-known map in a static environment. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test.launch
+1. Golf-cart navigating a pre-known map in a static environment. To run this [I'm an inline-style link with title](https://www.google.com "demo") - roslaunch src/lattice_global_planner/launch/parking_test.launch
 2. Golf-cart navigating a pre-known map with dynamic obstacles. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test_dynamic.launch
 3. Golf-cart navigating an unseen map. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test_mapping.launch
 4. Golf-cart being operated through teleop while it does mapping. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test_only_mapping.launch
