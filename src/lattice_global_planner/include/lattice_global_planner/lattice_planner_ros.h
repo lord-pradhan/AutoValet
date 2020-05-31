@@ -51,6 +51,14 @@ using namespace std;
 #include <cmath>
 #include "dubins.h"
 
+#include <pluginlib/class_list_macros.h>
+#include <ros/console.h>
+#include <ros/package.h>
+// #include <wx/wxprec.h>
+// #ifndef WX_PRECOMP
+//     #include <wx/wx.h>
+// #endif
+
 #define numOfDirs 8
 
 using std::string;
