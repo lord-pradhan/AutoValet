@@ -20,5 +20,7 @@ Four main demos are built in this project -
 <pre><code>roslaunch src/lattice_global_planner/launch/parking_test_only_mapping.launch</code></pre>
 
 References
+
 [1] Likhachev, Maxim, and Dave Ferguson. "Planning long dynamically feasible maneuvers for autonomous vehicles." The International Journal of Robotics Research 28.8 (2009): 933-945.
+
 [2] https://github.com/rst-tu-dortmund/teb_local_planner
