@@ -10,10 +10,14 @@ A lattice-graph planner using kinodynamic Ackermann primitives, based on [1], is
 To compile the code, clone the repo, build the workspace using catkin build, and download the neccesary dependencies.
 
 Four main demos are built in this project -
-1. Golf-cart navigating a pre-known map in a static environment. To run this [demo](https://www.youtube.com/watch?v=puQ2CkSKNUQ&t=3s "demo") - roslaunch src/lattice_global_planner/launch/parking_test.launch
-2. Golf-cart navigating a pre-known map with dynamic obstacles. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test_dynamic.launch
-3. Golf-cart navigating an unseen map. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test_mapping.launch
-4. Golf-cart being operated through teleop while it does mapping. To run this demo - roslaunch src/lattice_global_planner/launch/parking_test_only_mapping.launch
+1. Golf-cart navigating a pre-known map in a static environment. To run this [demo](https://www.youtube.com/watch?v=puQ2CkSKNUQ&t=3s "demo") - 
+<pre><code>roslaunch src/lattice_global_planner/launch/parking_test.launch</code></pre>
+2. Golf-cart navigating a pre-known map with dynamic obstacles. To run this [demo](https://www.youtube.com/watch?v=gZdnv3wEWOQ "demo") - 
+<pre><code>roslaunch src/lattice_global_planner/launch/parking_test_dynamic.launch</code></pre>
+3. Golf-cart navigating an unseen map. To run this [demo](https://www.youtube.com/watch?time_continue=4&v=eEPvryrkFr0&feature=emb_title "demo") - 
+<pre><code>roslaunch src/lattice_global_planner/launch/parking_test_mapping.launch</code></pre>
+4. Golf-cart being operated through teleop while it does mapping. To run this demo - 
+<pre><code>roslaunch src/lattice_global_planner/launch/parking_test_only_mapping.launch</code></pre>
 
 References
 [1] Likhachev, Maxim, and Dave Ferguson. "Planning long dynamically feasible maneuvers for autonomous vehicles." The International Journal of Robotics Research 28.8 (2009): 933-945.
