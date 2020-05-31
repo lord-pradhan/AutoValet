@@ -7,6 +7,8 @@ Gmapping is used for mapping and point-cloud data processing, and custom C++ cod
 
 A lattice-graph planner using kinodynamic Ackermann primitives, based on [1], is developed in C++ and integrated as a global planner plugin for move_base, with the local planner being adapted from the TEB Local Planner package [2] in ROS.
 
+Currently, our golf-cart uses simulation ground-truth as the state, however we are planning an update with a SLAM package to provide state-estimation from LiDAR input.
+
 To compile the code, clone the repo, build the workspace using catkin build, and download the neccesary dependencies.
 
 Four main demos are built in this project -
