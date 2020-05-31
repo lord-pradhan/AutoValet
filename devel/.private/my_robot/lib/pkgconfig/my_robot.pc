@@ -1,4 +1,4 @@
-prefix=/home/lord-pradhan/auto_valet/devel/.private/my_robot
+prefix=/home/soumya/24789/AutoValet/devel/.private/my_robot
 
 Name: my_robot
 Description: Description of my_robot

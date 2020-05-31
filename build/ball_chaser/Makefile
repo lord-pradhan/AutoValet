@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/src/perception/ball_chaser
+CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/src/perception/ball_chaser
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/ball_chaser
+CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/ball_chaser
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -137,9 +137,9 @@ test/fast: test
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/soumya/24789/AutoValet/build/ball_chaser/CMakeFiles /home/soumya/24789/AutoValet/build/ball_chaser/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/soumya/24789/AutoValet/build/ball_chaser/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

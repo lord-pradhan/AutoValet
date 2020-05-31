@@ -7,7 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/lord-pradhan/auto_valet/devel/.private/my_robot:$CMAKE_PREFIX_PATH"
-export PWD="/home/lord-pradhan/auto_valet/build/my_robot"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/lord-pradhan/auto_valet/devel/.private/my_robot/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/lord-pradhan/auto_valet/src/perception/my_robot:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/soumya/24789/AutoValet/devel/.private/my_robot:$CMAKE_PREFIX_PATH"
+export PWD="/home/soumya/24789/AutoValet/build/my_robot"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/soumya/24789/AutoValet/devel/.private/my_robot/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/soumya/24789/AutoValet/src/perception/my_robot:$ROS_PACKAGE_PATH"

@@ -68,7 +68,7 @@ void LatticePlannerROS::initialize(std::string name, costmap_2d::Costmap2D* cost
         // costmap_->setInflationParameters(6.0, 10.0);
         // read in motion primitives file
         ROS_INFO("Reading in motion primitives\n");
-        const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";    
+        const char* sMotPrimFile = "/home/soumya/24789/AutoValet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";    
 
         if (sMotPrimFile != NULL) {
             FILE* fMotPrim = fopen(sMotPrimFile, "r");
@@ -141,6 +141,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     }
 
     auto start1 = high_resolution_clock::now();
+    // ROS_INFO("started planning");
 
     //initialise vars
     int elemCt = 0;
@@ -280,7 +281,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 	        }
 	    }
 
-	    ROS_INFO("Dijkstra expansion done");
+	    // ROS_INFO("Dijkstra expansion done");
 
 	    // auto stop1 = high_resolution_clock::now();
 	    // auto duration1 = duration_cast<milliseconds>(stop1 - start1);
@@ -320,7 +321,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
             auto stop_temp = high_resolution_clock::now();
             auto duration_temp = duration_cast<milliseconds>(stop_temp - start1);
-            if( duration_temp.count() > 20000 ){
+            if( duration_temp.count() > 8000 ){
 
                 ROS_INFO("Taking too long to find a path, try a different goal");
                 fullGraph.clear();

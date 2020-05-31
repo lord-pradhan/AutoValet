@@ -1,4 +1,4 @@
-prefix=/home/lord-pradhan/auto_valet/install
+prefix=/home/soumya/24789/AutoValet/install
 
 Name: ball_chaser
 Description: Description of ball_chaser

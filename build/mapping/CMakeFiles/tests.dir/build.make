@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/src/perception/mapping
+CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/src/perception/mapping
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/mapping
+CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/mapping
 
 # Utility rule file for tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/tests.dir/clean:
 .PHONY : CMakeFiles/tests.dir/clean
 
 CMakeFiles/tests.dir/depend:
-	cd /home/lord-pradhan/auto_valet/build/mapping && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lord-pradhan/auto_valet/src/perception/mapping /home/lord-pradhan/auto_valet/src/perception/mapping /home/lord-pradhan/auto_valet/build/mapping /home/lord-pradhan/auto_valet/build/mapping /home/lord-pradhan/auto_valet/build/mapping/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/soumya/24789/AutoValet/build/mapping && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/soumya/24789/AutoValet/src/perception/mapping /home/soumya/24789/AutoValet/src/perception/mapping /home/soumya/24789/AutoValet/build/mapping /home/soumya/24789/AutoValet/build/mapping /home/soumya/24789/AutoValet/build/mapping/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tests.dir/depend
 

@@ -1,4 +1,4 @@
-prefix=/home/lord-pradhan/auto_valet/install
+prefix=/home/soumya/24789/AutoValet/install
 
 Name: catkin_tools_prebuild
 Description: Description of catkin_tools_prebuild

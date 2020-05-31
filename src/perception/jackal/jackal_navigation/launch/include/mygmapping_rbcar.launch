@@ -1,10 +1,12 @@
 <launch>
   <!-- <remap from="/front/scan" to="/front_laser/scan"/> -->
   <arg name="scan_topic" default="front_laser/scan" />
-  <node pkg="teb_local_planner_tutorials" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" />
+
   <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" />
   <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find jackal_viz)/rviz/gmapping.rviz" /> -->
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find jackal_gazebo)/rviz/rbcar.rviz" /> 
+<!--     <node pkg="abspos_rbcar" type="abspos_rbcar.py" name="abs_pos" />
+  <node pkg="teb_local_planner_tutorials" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find jackal_gazebo)/rviz/rbcar.rviz" />  -->
 
 
 <node pkg="mygmapping" type="myslam_gmapping" name="myslam_gmapping" output="screen">
@@ -28,12 +30,12 @@
     <param name="kernelSize" value="1"/>
     <param name="lstep" value="0.05"/>
     <param name="astep" value="0.05"/>
-    <param name="iterations" value="3"/>
+    <param name="iterations" value="5"/>
     <param name="lsigma" value="0.075"/>
     <param name="ogain" value="3.0"/>
     <param name="minimumScore" value="0.0"/>
     <!-- Number of beams to skip in each scan. -->
-    <param name="lskip" value="8"/>
+    <param name="lskip" value="1"/>
 
     <param name="srr" value="0.01"/>
     <param name="srt" value="0.02"/>

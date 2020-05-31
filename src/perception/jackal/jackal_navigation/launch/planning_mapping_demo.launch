@@ -1,0 +1,10 @@
+<launch>
+
+  <!--- Run gmapping -->
+  <include file="$(find jackal_navigation)/launch/include/rbcar_planning_mapping.launch" />
+  <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find jackal_viz)/rviz/gmapping.rviz" /> -->
+
+  <!--- Run Move Base -->
+  <!-- <include file="$(find jackal_navigation)/launch/include/move_base.launch" /> -->
+
+</launch>

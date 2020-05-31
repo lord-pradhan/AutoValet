@@ -7,8 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/lord-pradhan/auto_valet/devel/.private/teleop_twist_keyboard:$CMAKE_PREFIX_PATH"
-export PWD="/home/lord-pradhan/auto_valet/build/teleop_twist_keyboard"
-export PYTHONPATH="/home/lord-pradhan/auto_valet/devel/lib/python2.7/dist-packages:$PYTHONPATH"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/lord-pradhan/auto_valet/devel/.private/teleop_twist_keyboard/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/lord-pradhan/auto_valet/src/perception/teleop_twist_keyboard:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/soumya/24789/AutoValet/devel/.private/teleop_twist_keyboard:$CMAKE_PREFIX_PATH"
+export PWD="/home/soumya/24789/AutoValet/build/teleop_twist_keyboard"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/soumya/24789/AutoValet/devel/.private/teleop_twist_keyboard/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/soumya/24789/AutoValet/src/perception/teleop_twist_keyboard:$ROS_PACKAGE_PATH"

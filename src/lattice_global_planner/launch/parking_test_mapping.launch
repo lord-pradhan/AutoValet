@@ -10,6 +10,74 @@
 
 <launch>
 
-<include file="$(find jackal_gazebo)/launch/parking_world_rb_mapping.launch" /> 
+	<!--  ************** Global Parameters ***************  -->
+    <!-- <param name="/use_sim_time" value="true"/> -->
+
+	<!--  ************** Gazebo Simulator ***************  -->
+	<include file="$(find jackal_gazebo)/launch/parking_world_rb_mapping.launch" />
+	<node pkg="abspos_rbcar" type="abspos_rbcar.py" name="abs_pos" />
+	<node pkg="teb_local_planner_tutorials" type="cmd_vel_to_ackermann_drive.py" name="cmd_vel_to_ackermann" />
+
+
+	
+	  ************** Navigation ***************  
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  	  	<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/costmap_common_params.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/costmap_common_params.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/local_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/global_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
+  	
+
+  		<!-- This is the actual planner -->
+		<!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" /> -->
+
+		<!-- This is the planner I am testing -->
+		<param name="base_global_planner" value="lattice_planner/LatticePlannerROS" /> 
+
+
+
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+
+		<!-- Teb local planner -->
+		<param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+
+		<!-- Local Planner from Jackal -->
+		<!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>  -->
+
+		<param name="controller_frequency" value="10.0" />
+		<param name="controller_patience" value="15.0" />
+
+                <param name="clearing_rotation_allowed" value="false" /> 
+	</node>
+
+	
+
+	
+
+	<!--  ****** Maps *****  -->
+
+	<!-- This is the map I am testing -->
+	<!-- 
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find lattice_global_planner)include/lattice_global_planner/map.yaml" output="screen">
+
+            <param name="frame_id" value="map"/>
+
+	</node>
+ -->
+	<!-- <node pkg="amcl" type="amcl" name="amcl" output="screen">
+		<rosparam file="$(find teb_local_planner_tutorials)/cfg/amcl_params.yaml" command="load" />
+
+	        <param name="initial_pose_x"            value="0"/>
+		<param name="initial_pose_y"            value="0"/>
+		<param name="initial_pose_a"            value="0"/>
+	</node> -->
+
+
+	<!--  **************** Visualisation ****************  -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/>
+
+	<!-- <include file="$(find jackal_viz)/launch/view_robot.launch" /> -->
 
 </launch>

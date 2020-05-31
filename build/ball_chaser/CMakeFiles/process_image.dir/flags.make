@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=c++11
 
 CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_BUILD_SHARED_LIBS=1 -DROS_PACKAGE_NAME=\"ball_chaser\"
 
-CXX_INCLUDES = -I/home/lord-pradhan/auto_valet/devel/.private/ball_chaser/include -I/opt/ros/melodic/include -I/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp -I/home/lord-pradhan/auto_valet/src/perception/ball_chaser/include 
+CXX_INCLUDES = -I/home/soumya/24789/AutoValet/devel/.private/ball_chaser/include -I/opt/ros/melodic/include -I/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp -I/home/soumya/24789/AutoValet/src/perception/ball_chaser/include 
 
