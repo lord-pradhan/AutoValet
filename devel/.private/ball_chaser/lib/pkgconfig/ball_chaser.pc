@@ -1,8 +1,8 @@
-prefix=/home/soumya/24789/AutoValet/devel/.private/ball_chaser
+prefix=/home/lord-pradhan/auto_valet/devel/.private/ball_chaser
 
 Name: ball_chaser
 Description: Description of ball_chaser
 Version: 0.0.0
-Cflags: -I/home/soumya/24789/AutoValet/devel/.private/ball_chaser/include
+Cflags: -I/home/lord-pradhan/auto_valet/devel/.private/ball_chaser/include
 Libs: -L${prefix}/lib 
 Requires: 

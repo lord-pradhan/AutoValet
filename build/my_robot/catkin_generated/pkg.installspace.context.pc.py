@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "my_robot"
-PROJECT_SPACE_DIR = "/home/soumya/24789/AutoValet/install"
+PROJECT_SPACE_DIR = "/home/lord-pradhan/auto_valet/install"
 PROJECT_VERSION = "0.0.0"

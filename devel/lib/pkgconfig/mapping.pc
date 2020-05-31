@@ -1,1 +1,1 @@
-/home/soumya/24789/AutoValet/devel/.private/mapping/lib/pkgconfig/mapping.pc
+/home/lord-pradhan/auto_valet/devel/.private/mapping/lib/pkgconfig/mapping.pc

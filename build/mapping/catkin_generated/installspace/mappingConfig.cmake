@@ -67,14 +67,14 @@ set(mapping_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(mapping_SOURCE_PREFIX /home/soumya/24789/AutoValet/src/perception/mapping)
-  set(mapping_DEVEL_PREFIX /home/soumya/24789/AutoValet/devel/.private/mapping)
+  set(mapping_SOURCE_PREFIX /home/lord-pradhan/auto_valet/src/perception/mapping)
+  set(mapping_DEVEL_PREFIX /home/lord-pradhan/auto_valet/devel/.private/mapping)
   set(mapping_INSTALL_PREFIX "")
   set(mapping_PREFIX ${mapping_DEVEL_PREFIX})
 else()
   set(mapping_SOURCE_PREFIX "")
   set(mapping_DEVEL_PREFIX "")
-  set(mapping_INSTALL_PREFIX /home/soumya/24789/AutoValet/install)
+  set(mapping_INSTALL_PREFIX /home/lord-pradhan/auto_valet/install)
   set(mapping_PREFIX ${mapping_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/soumya/24789/AutoValet/install/lib;/home/soumya/24789/AutoValet/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/lord-pradhan/auto_valet/install/lib;/home/lord-pradhan/auto_valet/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

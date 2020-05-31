@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/src/perception/my_robot
+CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/src/perception/my_robot
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/my_robot
+CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/my_robot
 
 # Utility rule file for doxygen.
 
@@ -67,6 +67,6 @@ CMakeFiles/doxygen.dir/clean:
 .PHONY : CMakeFiles/doxygen.dir/clean
 
 CMakeFiles/doxygen.dir/depend:
-	cd /home/soumya/24789/AutoValet/build/my_robot && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/soumya/24789/AutoValet/src/perception/my_robot /home/soumya/24789/AutoValet/src/perception/my_robot /home/soumya/24789/AutoValet/build/my_robot /home/soumya/24789/AutoValet/build/my_robot /home/soumya/24789/AutoValet/build/my_robot/CMakeFiles/doxygen.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lord-pradhan/auto_valet/build/my_robot && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lord-pradhan/auto_valet/src/perception/my_robot /home/lord-pradhan/auto_valet/src/perception/my_robot /home/lord-pradhan/auto_valet/build/my_robot /home/lord-pradhan/auto_valet/build/my_robot /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/doxygen.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/doxygen.dir/depend
 

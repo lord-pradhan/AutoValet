@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/src/perception/teleop_twist_keyboard
+CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/src/perception/teleop_twist_keyboard
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/teleop_twist_keyboard
+CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/teleop_twist_keyboard
 
 # Utility rule file for _catkin_empty_exported_target.
 
@@ -67,6 +67,6 @@ CMakeFiles/_catkin_empty_exported_target.dir/clean:
 .PHONY : CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 CMakeFiles/_catkin_empty_exported_target.dir/depend:
-	cd /home/soumya/24789/AutoValet/build/teleop_twist_keyboard && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/soumya/24789/AutoValet/src/perception/teleop_twist_keyboard /home/soumya/24789/AutoValet/src/perception/teleop_twist_keyboard /home/soumya/24789/AutoValet/build/teleop_twist_keyboard /home/soumya/24789/AutoValet/build/teleop_twist_keyboard /home/soumya/24789/AutoValet/build/teleop_twist_keyboard/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lord-pradhan/auto_valet/build/teleop_twist_keyboard && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lord-pradhan/auto_valet/src/perception/teleop_twist_keyboard /home/lord-pradhan/auto_valet/src/perception/teleop_twist_keyboard /home/lord-pradhan/auto_valet/build/teleop_twist_keyboard /home/lord-pradhan/auto_valet/build/teleop_twist_keyboard /home/lord-pradhan/auto_valet/build/teleop_twist_keyboard/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/_catkin_empty_exported_target.dir/depend
 

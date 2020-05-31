@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/build/catkin_tools_prebuild
+CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/catkin_tools_prebuild
+CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild
 
 # Utility rule file for tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/tests.dir/clean:
 .PHONY : CMakeFiles/tests.dir/clean
 
 CMakeFiles/tests.dir/depend:
-	cd /home/soumya/24789/AutoValet/build/catkin_tools_prebuild && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/soumya/24789/AutoValet/build/catkin_tools_prebuild /home/soumya/24789/AutoValet/build/catkin_tools_prebuild /home/soumya/24789/AutoValet/build/catkin_tools_prebuild /home/soumya/24789/AutoValet/build/catkin_tools_prebuild /home/soumya/24789/AutoValet/build/catkin_tools_prebuild/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild /home/lord-pradhan/auto_valet/build/catkin_tools_prebuild/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tests.dir/depend
 

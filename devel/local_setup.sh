@@ -1,1 +1,1 @@
-/home/soumya/24789/AutoValet/devel/.private/catkin_tools_prebuild/local_setup.sh
+/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/local_setup.sh

@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/src/perception/ball_chaser
+CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/src/perception/ball_chaser
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/ball_chaser
+CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/ball_chaser
 
 # Utility rule file for rosgraph_msgs_generate_messages_py.
 
@@ -67,6 +67,6 @@ CMakeFiles/rosgraph_msgs_generate_messages_py.dir/clean:
 .PHONY : CMakeFiles/rosgraph_msgs_generate_messages_py.dir/clean
 
 CMakeFiles/rosgraph_msgs_generate_messages_py.dir/depend:
-	cd /home/soumya/24789/AutoValet/build/ball_chaser && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/soumya/24789/AutoValet/src/perception/ball_chaser /home/soumya/24789/AutoValet/src/perception/ball_chaser /home/soumya/24789/AutoValet/build/ball_chaser /home/soumya/24789/AutoValet/build/ball_chaser /home/soumya/24789/AutoValet/build/ball_chaser/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lord-pradhan/auto_valet/build/ball_chaser && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lord-pradhan/auto_valet/src/perception/ball_chaser /home/lord-pradhan/auto_valet/src/perception/ball_chaser /home/lord-pradhan/auto_valet/build/ball_chaser /home/lord-pradhan/auto_valet/build/ball_chaser /home/lord-pradhan/auto_valet/build/ball_chaser/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/rosgraph_msgs_generate_messages_py.dir/depend
 

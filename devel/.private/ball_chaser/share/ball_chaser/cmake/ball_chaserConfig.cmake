@@ -67,14 +67,14 @@ set(ball_chaser_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(ball_chaser_SOURCE_PREFIX /home/soumya/24789/AutoValet/src/perception/ball_chaser)
-  set(ball_chaser_DEVEL_PREFIX /home/soumya/24789/AutoValet/devel/.private/ball_chaser)
+  set(ball_chaser_SOURCE_PREFIX /home/lord-pradhan/auto_valet/src/perception/ball_chaser)
+  set(ball_chaser_DEVEL_PREFIX /home/lord-pradhan/auto_valet/devel/.private/ball_chaser)
   set(ball_chaser_INSTALL_PREFIX "")
   set(ball_chaser_PREFIX ${ball_chaser_DEVEL_PREFIX})
 else()
   set(ball_chaser_SOURCE_PREFIX "")
   set(ball_chaser_DEVEL_PREFIX "")
-  set(ball_chaser_INSTALL_PREFIX /home/soumya/24789/AutoValet/install)
+  set(ball_chaser_INSTALL_PREFIX /home/lord-pradhan/auto_valet/install)
   set(ball_chaser_PREFIX ${ball_chaser_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(ball_chaser_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/soumya/24789/AutoValet/devel/.private/ball_chaser/include " STREQUAL " ")
+if(NOT "/home/lord-pradhan/auto_valet/devel/.private/ball_chaser/include " STREQUAL " ")
   set(ball_chaser_INCLUDE_DIRS "")
-  set(_include_dirs "/home/soumya/24789/AutoValet/devel/.private/ball_chaser/include")
+  set(_include_dirs "/home/lord-pradhan/auto_valet/devel/.private/ball_chaser/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -110,7 +110,7 @@ if(NOT "/home/soumya/24789/AutoValet/devel/.private/ball_chaser/include " STREQU
         message(FATAL_ERROR "Project 'ball_chaser' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  ${_report}")
       endif()
     else()
-      message(FATAL_ERROR "Project 'ball_chaser' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/soumya/24789/AutoValet/src/perception/ball_chaser/${idir}'.  ${_report}")
+      message(FATAL_ERROR "Project 'ball_chaser' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/lord-pradhan/auto_valet/src/perception/ball_chaser/${idir}'.  ${_report}")
     endif()
     _list_append_unique(ball_chaser_INCLUDE_DIRS ${include})
   endforeach()
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/soumya/24789/AutoValet/devel/.private/ball_chaser/lib;/home/soumya/24789/AutoValet/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/lord-pradhan/auto_valet/devel/.private/ball_chaser/lib;/home/lord-pradhan/auto_valet/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

@@ -1,46 +1,12 @@
-Symlinking /home/soumya/24789/AutoValet/devel/./setup.sh
-Symlinking /home/soumya/24789/AutoValet/devel/./env.sh
-Symlinking /home/soumya/24789/AutoValet/devel/./local_setup.sh
-Symlinking /home/soumya/24789/AutoValet/devel/./setup.bash
-Symlinking /home/soumya/24789/AutoValet/devel/./_setup_util.py
-Symlinking /home/soumya/24789/AutoValet/devel/./cmake.lock
-Symlinking /home/soumya/24789/AutoValet/devel/./setup.zsh
-Symlinking /home/soumya/24789/AutoValet/devel/./local_setup.zsh
-Symlinking /home/soumya/24789/AutoValet/devel/./local_setup.bash
-Symlinking /home/soumya/24789/AutoValet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
-Symlinking /home/soumya/24789/AutoValet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
-Symlinking /home/soumya/24789/AutoValet/devel/lib/pkgconfig/catkin_tools_prebuild.pc
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/cmake.lock, /home/lord-pradhan/auto_valet/devel/./cmake.lock)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/setup.bash, /home/lord-pradhan/auto_valet/devel/./setup.bash)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/setup.zsh, /home/lord-pradhan/auto_valet/devel/./setup.zsh)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/_setup_util.py, /home/lord-pradhan/auto_valet/devel/./_setup_util.py)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/local_setup.zsh, /home/lord-pradhan/auto_valet/devel/./local_setup.zsh)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/local_setup.sh, /home/lord-pradhan/auto_valet/devel/./local_setup.sh)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/setup.sh, /home/lord-pradhan/auto_valet/devel/./setup.sh)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/env.sh, /home/lord-pradhan/auto_valet/devel/./env.sh)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/local_setup.bash, /home/lord-pradhan/auto_valet/devel/./local_setup.bash)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake, /home/lord-pradhan/auto_valet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake, /home/lord-pradhan/auto_valet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake)
-Cleaning: (/home/lord-pradhan/auto_valet/devel/.private/catkin_tools_prebuild/lib/pkgconfig/catkin_tools_prebuild.pc, /home/lord-pradhan/auto_valet/devel/lib/pkgconfig/catkin_tools_prebuild.pc)
-Unlinking: /home/lord-pradhan/auto_valet/devel/./setup.bash
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./setup.zsh
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./_setup_util.py
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./local_setup.zsh
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./local_setup.sh
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./setup.sh
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./env.sh
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/./local_setup.bash
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
-Already unlinked: {}
-Unlinking: /home/lord-pradhan/auto_valet/devel/lib/pkgconfig/catkin_tools_prebuild.pc
-Already unlinked: {}
+Symlinking /home/lord-pradhan/auto_valet/devel/./cmake.lock
+Symlinking /home/lord-pradhan/auto_valet/devel/./setup.bash
+Symlinking /home/lord-pradhan/auto_valet/devel/./setup.zsh
+Symlinking /home/lord-pradhan/auto_valet/devel/./_setup_util.py
+Symlinking /home/lord-pradhan/auto_valet/devel/./local_setup.zsh
+Symlinking /home/lord-pradhan/auto_valet/devel/./local_setup.sh
+Symlinking /home/lord-pradhan/auto_valet/devel/./setup.sh
+Symlinking /home/lord-pradhan/auto_valet/devel/./env.sh
+Symlinking /home/lord-pradhan/auto_valet/devel/./local_setup.bash
+Symlinking /home/lord-pradhan/auto_valet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
+Symlinking /home/lord-pradhan/auto_valet/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+Symlinking /home/lord-pradhan/auto_valet/devel/lib/pkgconfig/catkin_tools_prebuild.pc

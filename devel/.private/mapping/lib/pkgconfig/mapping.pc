@@ -1,4 +1,4 @@
-prefix=/home/soumya/24789/AutoValet/devel/.private/mapping
+prefix=/home/lord-pradhan/auto_valet/devel/.private/mapping
 
 Name: mapping
 Description: Description of mapping

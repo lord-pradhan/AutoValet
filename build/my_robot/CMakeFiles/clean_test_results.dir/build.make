@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/soumya/24789/AutoValet/src/perception/my_robot
+CMAKE_SOURCE_DIR = /home/lord-pradhan/auto_valet/src/perception/my_robot
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/my_robot
+CMAKE_BINARY_DIR = /home/lord-pradhan/auto_valet/build/my_robot
 
 # Utility rule file for clean_test_results.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/soumya/24789/AutoValet/build/my_robot
 include CMakeFiles/clean_test_results.dir/progress.make
 
 CMakeFiles/clean_test_results:
-	/usr/bin/python2 /opt/ros/melodic/share/catkin/cmake/test/remove_test_results.py /home/soumya/24789/AutoValet/build/my_robot/test_results
+	/usr/bin/python2 /opt/ros/melodic/share/catkin/cmake/test/remove_test_results.py /home/lord-pradhan/auto_valet/build/my_robot/test_results
 
 clean_test_results: CMakeFiles/clean_test_results
 clean_test_results: CMakeFiles/clean_test_results.dir/build.make
@@ -71,6 +71,6 @@ CMakeFiles/clean_test_results.dir/clean:
 .PHONY : CMakeFiles/clean_test_results.dir/clean
 
 CMakeFiles/clean_test_results.dir/depend:
-	cd /home/soumya/24789/AutoValet/build/my_robot && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/soumya/24789/AutoValet/src/perception/my_robot /home/soumya/24789/AutoValet/src/perception/my_robot /home/soumya/24789/AutoValet/build/my_robot /home/soumya/24789/AutoValet/build/my_robot /home/soumya/24789/AutoValet/build/my_robot/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lord-pradhan/auto_valet/build/my_robot && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lord-pradhan/auto_valet/src/perception/my_robot /home/lord-pradhan/auto_valet/src/perception/my_robot /home/lord-pradhan/auto_valet/build/my_robot /home/lord-pradhan/auto_valet/build/my_robot /home/lord-pradhan/auto_valet/build/my_robot/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/clean_test_results.dir/depend
 

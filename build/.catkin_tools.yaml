@@ -1,6 +1,6 @@
-devel_space: /home/soumya/24789/AutoValet/devel
+devel_space: /home/lord-pradhan/auto_valet/devel
 install: false
-install_space: /home/soumya/24789/AutoValet/install
+install_space: /home/lord-pradhan/auto_valet/install
 profile: default
-source_space: /home/soumya/24789/AutoValet/src
-workspace: /home/soumya/24789/AutoValet
+source_space: /home/lord-pradhan/auto_valet/src
+workspace: /home/lord-pradhan/auto_valet

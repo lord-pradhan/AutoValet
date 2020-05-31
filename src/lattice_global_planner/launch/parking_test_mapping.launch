@@ -1,17 +1,7 @@
-<!-- 
-  Simulate a carlike robot with the teb_local_planner in stage:
-  - stage
-  - map_server
-  - move_base
-  - static map
-  - amcl
-  - rviz view
- -->
 
 <launch>
 
-	<!--  ************** Global Parameters ***************  -->
-    <!-- <param name="/use_sim_time" value="true"/> -->
+	<include file="$(find jackal_navigation)/launch/include/rbcar_planning_mapping.launch" />
 
 	<!--  ************** Gazebo Simulator ***************  -->
 	<include file="$(find jackal_gazebo)/launch/parking_world_rb_mapping.launch" />
@@ -51,28 +41,6 @@
 
                 <param name="clearing_rotation_allowed" value="false" /> 
 	</node>
-
-	
-
-	
-
-	<!--  ****** Maps *****  -->
-
-	<!-- This is the map I am testing -->
-	<!-- 
-	<node name="map_server" pkg="map_server" type="map_server" args="$(find lattice_global_planner)include/lattice_global_planner/map.yaml" output="screen">
-
-            <param name="frame_id" value="map"/>
-
-	</node>
- -->
-	<!-- <node pkg="amcl" type="amcl" name="amcl" output="screen">
-		<rosparam file="$(find teb_local_planner_tutorials)/cfg/amcl_params.yaml" command="load" />
-
-	        <param name="initial_pose_x"            value="0"/>
-		<param name="initial_pose_y"            value="0"/>
-		<param name="initial_pose_a"            value="0"/>
-	</node> -->
 
 
 	<!--  **************** Visualisation ****************  -->

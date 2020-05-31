@@ -68,7 +68,7 @@ void LatticePlannerROS::initialize(std::string name, costmap_2d::Costmap2D* cost
         // costmap_->setInflationParameters(6.0, 10.0);
         // read in motion primitives file
         ROS_INFO("Reading in motion primitives\n");
-        const char* sMotPrimFile = "/home/soumya/24789/AutoValet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";    
+        const char* sMotPrimFile = "/home/lord-pradhan/auto_valet/src/lattice_global_planner/include/lattice_global_planner/prim_test.mprim";
 
         if (sMotPrimFile != NULL) {
             FILE* fMotPrim = fopen(sMotPrimFile, "r");
@@ -209,77 +209,77 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
     
 
     // Run Dijkstra only when goal is updated
-    if(functionCall==0 || !(coordsGoalDisc == coordsGoalDiscPrev) ){
+    // if(functionCall==0 || !(coordsGoalDisc == coordsGoalDiscPrev) ){
 
-    	gridmap_pre.clear();
-        State_pre state_init_pre;
-	    gridmap_pre.resize(y_size, std::vector<State_pre>(x_size, state_init_pre) );
+	gridmap_pre.clear();
+    State_pre state_init_pre;
+    gridmap_pre.resize(y_size, std::vector<State_pre>(x_size, state_init_pre) );
 
-	    // initialize map
-	    for (int i =0; i<y_size; i++){
-	        for (int j=0; j<x_size; j++){
+    // initialize map
+    for (int i =0; i<y_size; i++){
+        for (int j=0; j<x_size; j++){
 
-	            // these coords are in discrete frame
-	            gridmap_pre[i][j].coords.x = j; 
-	            gridmap_pre[i][j].coords.y = i;
-	        }
-	    }
+            // these coords are in discrete frame
+            gridmap_pre[i][j].coords.x = j; 
+            gridmap_pre[i][j].coords.y = i;
+        }
+    }
 
-	    // Dijkstra backwards expansion for heuristics
-	    gridmap_pre[coordsGoalDisc.y][coordsGoalDisc.x].G_val = 0.0;
+    // Dijkstra backwards expansion for heuristics
+    gridmap_pre[coordsGoalDisc.y][coordsGoalDisc.x].G_val = 0.0;
 
-	    std::priority_queue< State_pre, std::vector<State_pre>, CompareF_pre > open_set_pre;
-	    open_set_pre.push(gridmap_pre[coordsGoalDisc.y][coordsGoalDisc.x]);
+    std::priority_queue< State_pre, std::vector<State_pre>, CompareF_pre > open_set_pre;
+    open_set_pre.push(gridmap_pre[coordsGoalDisc.y][coordsGoalDisc.x]);
 
-	    // ROS_INFO("Before entering Dijkstra expansion while loop");
+    // ROS_INFO("Before entering Dijkstra expansion while loop");
 
-	    while( !open_set_pre.empty() ){
+    while( !open_set_pre.empty() ){
 
-	        State_pre temp_pre = open_set_pre.top();
+        State_pre temp_pre = open_set_pre.top();
 
-	        // these are in discrete
-	        int x_temp_disc = temp_pre.coords.x, y_temp_disc = temp_pre.coords.y;
-	        double G_temp = temp_pre.G_val;
-	        gridmap_pre[y_temp_disc][x_temp_disc].expanded = true;
+        // these are in discrete
+        int x_temp_disc = temp_pre.coords.x, y_temp_disc = temp_pre.coords.y;
+        double G_temp = temp_pre.G_val;
+        gridmap_pre[y_temp_disc][x_temp_disc].expanded = true;
 
-	        open_set_pre.pop();
-	        // lookUpHEnv[GetIndex(coordTemp)] = temp_pre.G_val;
+        open_set_pre.pop();
+        // lookUpHEnv[GetIndex(coordTemp)] = temp_pre.G_val;
 
-	        for(int dir =0; dir<numOfDirs; dir++){
+        for(int dir =0; dir<numOfDirs; dir++){
 
-	            int newx_disc = x_temp_disc + dX[dir], newy_disc = y_temp_disc + dY[dir];
-	            // CoordDisc coordsNewTemp(newx_disc, newy_disc, 0);
-	            double newx_cont = DiscXY2Cont(newx_disc, graph_dx);
-	            double newy_cont = DiscXY2Cont(newy_disc, graph_dy);
+            int newx_disc = x_temp_disc + dX[dir], newy_disc = y_temp_disc + dY[dir];
+            // CoordDisc coordsNewTemp(newx_disc, newy_disc, 0);
+            double newx_cont = DiscXY2Cont(newx_disc, graph_dx);
+            double newy_cont = DiscXY2Cont(newy_disc, graph_dy);
 
-	            // ROS_INFO("newx_cont is %lf", newx_cont);
-	            // ROS_INFO("newy_cont is %lf", newy_cont);
+            // ROS_INFO("newx_cont is %lf", newx_cont);
+            // ROS_INFO("newy_cont is %lf", newy_cont);
 
-	            float newx_world, newy_world;
-	            cont2World(newx_cont, newy_cont, newx_world, newy_world);
+            float newx_world, newy_world;
+            cont2World(newx_cont, newy_cont, newx_world, newy_world);
 
-	            unsigned int x_new_cmap, y_new_cmap; // costmap frame
+            unsigned int x_new_cmap, y_new_cmap; // costmap frame
 
-	            if( costmap_->worldToMap(newx_world, newy_world, x_new_cmap, y_new_cmap) && 
-	                (gridmap_pre[newy_disc][newx_disc].expanded==false) ){ 
+            if( costmap_->worldToMap(newx_world, newy_world, x_new_cmap, y_new_cmap) && 
+                (gridmap_pre[newy_disc][newx_disc].expanded==false) ){ 
 
-	                if( (double) (costmap_->getCost(x_new_cmap, y_new_cmap)) < collision_thresh &&
-	                    gridmap_pre[newy_disc][newx_disc].G_val > G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap)) ){
-	                    
-	                    gridmap_pre[newy_disc][newx_disc].G_val = G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap));
-	                    open_set_pre.push(gridmap_pre[newy_disc][newx_disc]);
-	                    // ROS_INFO("pushed H-val during Dijkstra is %lf", gridmap_pre[newy_disc][newx_disc].G_val);
-	                }
-	                else if((double) (costmap_->getCost(x_new_cmap, y_new_cmap)) >= collision_thresh) {
-	                    // ROS_INFO("Encountered obstacle");
-	                    // printf("cost of new cell is %lf\n", (double) costmap_->getCost(x_new_cmap, y_new_cmap) );
-	                }
-	            }
-	            else{
-	                // ROS_INFO("Out-of-map position or previously expanded state reached");
-	            }
-	        }
-	    }
+                if( (double) (costmap_->getCost(x_new_cmap, y_new_cmap)) < collision_thresh &&
+                    gridmap_pre[newy_disc][newx_disc].G_val > G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap)) ){
+                    
+                    gridmap_pre[newy_disc][newx_disc].G_val = G_temp + cost[dir] + (double)(costmap_->getCost(x_new_cmap, y_new_cmap));
+                    open_set_pre.push(gridmap_pre[newy_disc][newx_disc]);
+                    // ROS_INFO("pushed H-val during Dijkstra is %lf", gridmap_pre[newy_disc][newx_disc].G_val);
+                }
+                else if((double) (costmap_->getCost(x_new_cmap, y_new_cmap)) >= collision_thresh) {
+                    // ROS_INFO("Encountered obstacle");
+                    // printf("cost of new cell is %lf\n", (double) costmap_->getCost(x_new_cmap, y_new_cmap) );
+                }
+            }
+            else{
+                // ROS_INFO("Out-of-map position or previously expanded state reached");
+            }
+        }
+	    // }
 
 	    // ROS_INFO("Dijkstra expansion done");
 
@@ -321,7 +321,7 @@ bool LatticePlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const 
 
             auto stop_temp = high_resolution_clock::now();
             auto duration_temp = duration_cast<milliseconds>(stop_temp - start1);
-            if( duration_temp.count() > 8000 ){
+            if( duration_temp.count() > 10000 ){
 
                 ROS_INFO("Taking too long to find a path, try a different goal");
                 fullGraph.clear();
